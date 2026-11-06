@@ -1,0 +1,1879 @@
+<!DOCTYPE html>
+<html lang="es" data-text-size="normal" data-theme="claro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Micheladas El Mismísimo • Caja y Pedidos</title>
+  <link rel="icon" type="image/jpeg" href="/logo-small.jpg">
+  <!-- Instalable como app (pantalla completa, sin barra del navegador) -->
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <meta name="theme-color" content="#111111">
+  <meta name="mobile-web-app-capable" content="yes">
+
+  <!-- Letra Outfit (guardada en el propio sistema: no depende de internet) -->
+  <link rel="preload" href="/fonts/outfit-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <!-- El programa se pide desde el primer instante (en paralelo con los estilos), sin esperar a que la página lo descubra -->
+  <link rel="modulepreload" href="/js/app.js">
+  <link rel="modulepreload" href="/js/escpos.js">
+
+  <!-- Estilos principales + estilos del "modo simple" (letra grande, botones claros) -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/simple.css">
+  <!-- Barra lateral de íconos y encabezado delgado -->
+  <link rel="stylesheet" href="/css/shell.css">
+  <!-- Pantallas más simples (Mesas, Inventario, Menú, Resumen, Mi caja) -->
+  <link rel="stylesheet" href="/css/pantallas.css">
+  <!-- Fondo claro (por defecto) y su versión oscura -->
+  <link rel="stylesheet" href="/css/tema.css">
+  <script>
+    /* Aplica el fondo (claro u oscuro) y el tamaño de letra guardados ANTES de pintar la pantalla (evita parpadeos) */
+    try {
+      var th = localStorage.getItem('mismisimo_theme');
+      document.documentElement.setAttribute('data-theme', th === 'oscuro' ? 'oscuro' : 'claro');
+    } catch (e) {}
+    try {
+      var s = localStorage.getItem('mismisimo_text_size');
+      if (s === 'normal' || s === 'grande' || s === 'muy-grande') document.documentElement.setAttribute('data-text-size', s);
+    } catch (e) {}
+  </script>
+</head>
+<body>
+  <noscript>
+    <p style="padding:2rem;font-size:1.3rem;color:#fff;">Para usar este sistema hay que activar JavaScript en el navegador.</p>
+  </noscript>
+
+  <!-- ================= PANTALLA DE ENTRADA ================= -->
+  <div id="authView" class="auth-wrapper">
+    <div class="auth-card">
+      <img src="/logo-small.jpg" alt="Micheladas El Mismísimo" class="auth-logo">
+      <h2 class="auth-title">Micheladas El Mismísimo</h2>
+      <p class="auth-subtitle">Escribe tu usuario y tu contraseña para entrar</p>
+
+      <form id="loginForm" autocomplete="on">
+        <div class="form-group">
+          <label class="form-label" for="loginUsername">Tu usuario</label>
+          <input type="text" id="loginUsername" class="form-control" placeholder="Escribe tu usuario" required autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="loginPassword">Tu contraseña</label>
+          <input type="password" id="loginPassword" class="form-control" placeholder="Escribe tu contraseña" required autocomplete="current-password">
+        </div>
+
+        <label class="show-password" for="loginShowPassword">
+          <input type="checkbox" id="loginShowPassword">
+          <span>Ver lo que escribo en la contraseña</span>
+        </label>
+
+        <div id="loginError" class="login-error" role="alert" style="display: none;"></div>
+
+        <button type="submit" class="btn btn-primary btn-block" id="btnLogin">
+          ENTRAR
+        </button>
+      </form>
+
+      <p class="auth-help">¿No puedes entrar o olvidaste tu contraseña? Pídele ayuda al administrador.</p>
+    </div>
+  </div>
+
+  <!-- ================= PANTALLA PRINCIPAL ================= -->
+  <div id="appView" class="app-container" style="display: none;">
+
+    <!-- Barra de arriba -->
+    <header class="app-header" id="appHeader">
+      <div class="header-brand">
+        <img src="/logo-small.jpg" alt="El Mismísimo" class="header-logo">
+        <div class="brand-info">
+          <h1 id="headerBusinessName">El Mismísimo</h1>
+          <span id="headerTagline">Refresquería & Bar</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Sucursal en la que se está trabajando (solo aparece si hay más de una) -->
+        <div class="branch-picker" id="branchPicker" style="display: none;">
+          <label class="branch-picker-label" for="branchSelect"><span aria-hidden="true">🏬</span> <span class="branch-picker-word">Sucursal</span></label>
+          <select id="branchSelect" class="branch-select" title="Elige la sucursal en la que estás trabajando"></select>
+          <span class="branch-chip" id="branchChip" style="display: none;" title="Tu sucursal"><span aria-hidden="true">🏬</span> <span id="branchChipName"></span></span>
+        </div>
+
+        <!-- Estado de la caja: toca para abrir o cerrar -->
+        <button id="btnShiftStatus" class="btn btn-secondary btn-sm btn-tablet-compact" title="Toca aquí para abrir o cerrar tu caja">
+          <span id="shiftStatusDot">🔴</span> <span id="shiftStatusText">Caja cerrada</span>
+        </button>
+
+        <!-- Quién entró -->
+        <div class="user-profile">
+          <span id="userRoleBadge" class="badge-role badge-admin">Administrador</span>
+          <div class="user-avatar" id="userAvatar">A</div>
+          <span id="userFullName" class="user-fullname-desktop">Administrador</span>
+        </div>
+
+        <!-- Pantalla completa -->
+        <button id="btnToggleFullscreen" class="btn btn-secondary btn-sm" title="Pantalla completa" aria-label="Pantalla completa">
+          ⛶ <span class="btn-label-optional">Pantalla completa</span>
+        </button>
+
+        <!-- Salir -->
+        <button id="btnLogout" class="btn btn-secondary btn-sm" title="Salir del sistema" aria-label="Salir del sistema">
+          🚪 <span class="logout-text-desktop">Salir</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Pestañas -->
+    <nav class="nav-tabs" id="navTabs" aria-label="Secciones del sistema">
+      <div class="nav-tabs-left">
+        <!-- Marca pequeña (solo cuando la barra de arriba está oculta) -->
+        <div class="discrete-brand" id="discreteBrand">
+          <img src="/logo-small.jpg" alt="Logo" class="discrete-logo">
+          <span class="discrete-title">El Mismísimo</span>
+        </div>
+
+        <!-- Solo en tabletas bajitas: las pestañas se esconden en este menú para dejar más lugar al pedido -->
+        <button type="button" class="nav-menu-btn" id="btnNavMenu" aria-expanded="false" aria-controls="navTabButtons" title="Abre el menú para cambiar de pantalla">
+          <span aria-hidden="true">☰</span> <span id="navMenuLabel">Menú</span> <span aria-hidden="true" class="nav-menu-caret">▾</span>
+        </button>
+
+        <div class="nav-tab-buttons" id="navTabButtons">
+          <button class="nav-tab-btn active" data-tab="dashboard" id="tabDashboard">
+            <span class="tab-ico" aria-hidden="true">📊</span> <span class="tab-txt">Resumen</span>
+          </button>
+
+          <button class="nav-tab-btn" data-tab="pos" id="tabPos">
+            <span class="tab-ico" aria-hidden="true">🍹</span> <span class="tab-txt">Vender</span>
+          </button>
+
+          <button class="nav-tab-btn" data-tab="tables" id="tabTables">
+            <span class="tab-ico" aria-hidden="true">🪑</span> <span class="tab-txt">Mesas</span>
+          </button>
+
+          <button class="nav-tab-btn" data-tab="inventory" id="tabInventory">
+            <span class="tab-ico" aria-hidden="true">📦</span> <span class="tab-txt">Inventario</span>
+          </button>
+
+          <button class="nav-tab-btn" data-tab="products" id="tabProducts">
+            <span class="tab-ico" aria-hidden="true">📋</span> <span class="tab-txt">Menú</span>
+          </button>
+
+          <button class="nav-tab-btn" data-tab="sales" id="tabSales">
+            <span class="tab-ico" aria-hidden="true">🧾</span> <span class="tab-txt">Ventas hechas</span>
+          </button>
+
+          <button class="nav-tab-btn" data-tab="shifts" id="tabShifts">
+            <span class="tab-ico" aria-hidden="true">💰</span> <span class="tab-txt">Cortes de caja</span>
+          </button>
+
+          <button class="nav-tab-btn" data-tab="users" id="tabUsers">
+            <span class="tab-ico" aria-hidden="true">👥</span> <span class="tab-txt">Personal</span>
+          </button>
+
+          <button class="nav-tab-btn" data-tab="settings" id="tabSettings">
+            <span class="tab-ico" aria-hidden="true">⚙️</span> <span class="tab-txt">Ajustes</span>
+          </button>
+
+          <!-- Solo para el vendedor -->
+          <button class="nav-tab-btn" data-tab="myShift" id="tabMyShift" style="display: none;">
+            <span class="tab-ico" aria-hidden="true">💰</span> <span class="tab-txt">Mi caja</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Pie de la barra lateral: cambiar entre fondo claro y oscuro (se recuerda en cada aparato) -->
+      <div class="rail-foot">
+        <button type="button" class="rail-theme-btn" id="btnToggleTheme" title="Cambiar entre fondo claro y fondo oscuro" aria-label="Cambiar a fondo oscuro">
+          <span class="tab-ico" id="themeIco" aria-hidden="true">🌙</span> <span class="tab-txt" id="themeTxt">Oscuro</span>
+        </button>
+      </div>
+
+      <!-- (Ya no se usa: la barra de arriba siempre se ve. Se deja escondido para no romper nada.) Controles cuando la barra de arriba está oculta -->
+      <div class="nav-discrete-right" id="navDiscreteRight">
+        <div class="branch-picker branch-picker-discrete" id="branchPickerDiscrete" style="display: none;">
+          <label class="branch-picker-label" for="branchSelectDiscrete"><span aria-hidden="true">🏬</span></label>
+          <select id="branchSelectDiscrete" class="branch-select" aria-label="Sucursal en la que estás trabajando" title="Elige la sucursal en la que estás trabajando"></select>
+          <span class="branch-chip" id="branchChipDiscrete" style="display: none;"><span aria-hidden="true">🏬</span> <span id="branchChipNameDiscrete"></span></span>
+        </div>
+        <button id="btnDiscreteShift" class="btn-discrete-shift" title="Toca aquí para abrir o cerrar tu caja">
+          <span id="discreteShiftDot">🔴</span> <span id="discreteShiftText">Caja cerrada</span>
+        </button>
+        <button id="btnRestoreHeader" class="btn-discrete-action btn-restore" title="Volver a mostrar la barra de arriba">
+          ▼ Mostrar barra
+        </button>
+        <button id="btnDiscreteFullscreen" class="btn-discrete-action" title="Pantalla completa" aria-label="Pantalla completa">
+          ⛶
+        </button>
+        <button id="btnDiscreteLogout" class="btn-discrete-action btn-logout-icon" title="Salir del sistema" aria-label="Salir del sistema">
+          🚪 Salir
+        </button>
+      </div>
+    </nav>
+
+    <!-- Contenido -->
+    <main class="main-view">
+
+      <!-- ================= ELEGIR SUCURSAL (cuando está en "Ambas" o no tiene ninguna) ================= -->
+      <section id="viewBranchGate" class="tab-content" style="display: none;">
+        <div class="branch-gate">
+          <div class="branch-gate-icon" aria-hidden="true">🏬</div>
+          <h2 id="branchGateTitle">Elige una sucursal</h2>
+          <p id="branchGateText" class="help-text"></p>
+          <div class="branch-gate-buttons" id="branchGateButtons"></div>
+        </div>
+      </section>
+
+      <!-- ================= RESUMEN (SOLO ADMIN) ================= -->
+      <section id="viewDashboard" class="tab-content">
+        <div class="page-head">
+          <div>
+            <h2>📊 Resumen del negocio <span class="scope-chip" data-scope-chip></span></h2>
+            <p>Así va el negocio hoy. Se actualiza solo.</p>
+          </div>
+        </div>
+
+        <div class="dashboard-grid dash-kpis">
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span>Ventas de hoy</span>
+              <span class="kpi-icon">💰</span>
+            </div>
+            <div class="kpi-value" id="kpiTodayRevenue">Q 0.00</div>
+            <div class="kpi-footer"><span id="kpiTodayOrders">0 ventas hoy</span> · cada una deja en promedio <strong id="kpiAverageTicket">Q 0.00</strong></div>
+            <div class="kpi-footer kpi-voided" id="kpiVoidedToday" style="display: none;"></div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span>Ganancia de hoy (aproximada)</span>
+              <span class="kpi-icon">📈</span>
+            </div>
+            <div class="kpi-value" id="kpiNetProfit" style="color: var(--ok-text);">Q 0.00</div>
+            <div class="kpi-footer">Lo vendido menos lo que costaron las bebidas</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span>Ventas del mes</span>
+              <span class="kpi-icon">📅</span>
+            </div>
+            <div class="kpi-value" id="kpiMonthRevenue">Q 0.00</div>
+            <div class="kpi-footer" id="kpiMonthOrders">0 ventas en el mes</div>
+          </div>
+        </div>
+
+        <div class="dashboard-split">
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>🚨 Se está acabando</h3>
+              <button class="btn btn-secondary btn-sm" onclick="app.switchTab('inventory')">Ver inventario</button>
+            </div>
+            <div id="dashboardLowStockList">
+              <!-- Se llena con JS -->
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-header">
+              <h3>⭐ Lo más vendido</h3>
+            </div>
+            <div id="dashboardTopProductsList">
+              <!-- Se llena con JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Las gráficas quedan guardadas: se abren solo si se quieren ver -->
+        <details class="dash-charts" id="dashCharts">
+          <summary>📈 Ver las gráficas (ventas hora por hora y cómo pagan los clientes)</summary>
+          <div class="dashboard-split">
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3>Ventas de hoy, hora por hora</h3>
+              </div>
+              <div style="height: 260px; position: relative;">
+                <canvas id="chartHourlySales"></canvas>
+              </div>
+            </div>
+
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3>Cómo pagan los clientes</h3>
+              </div>
+              <div style="height: 260px; position: relative;">
+                <canvas id="chartPaymentMethods"></canvas>
+              </div>
+            </div>
+          </div>
+        </details>
+      </section>
+
+      <!-- ================= VENDER ================= -->
+      <section id="viewPos" class="tab-content" style="display: none;">
+        <div class="pos-layout">
+
+          <!-- Lista de productos (izquierda) -->
+          <div class="pos-catalog-panel">
+            <!-- Aviso si la caja está cerrada -->
+            <div id="posShiftBanner" class="shift-banner" style="display: none;" role="status">
+              <span>⚠️ Tu caja está cerrada.<span class="banner-extra"> Ábrela para que tus ventas se sumen al corte.</span></span>
+              <button type="button" class="btn btn-primary btn-sm" id="btnPosOpenShift">Abrir caja</button>
+            </div>
+
+            <div class="pos-toolbar">
+              <div class="search-box">
+                <span class="search-icon" aria-hidden="true">🔍</span>
+                <input type="text" id="posSearchInput" placeholder="Buscar producto" aria-label="Buscar un producto por su nombre">
+              </div>
+            </div>
+
+            <!-- Secciones del menú -->
+            <div class="pos-categories" id="posCategoryPills">
+              <button class="cat-pill active" data-cat="all">⭐ Todo</button>
+              <!-- Se llena con JS -->
+            </div>
+
+            <!-- Productos -->
+            <div class="pos-products-grid show-hints" id="posProductsGrid">
+              <!-- Se llena con JS -->
+            </div>
+          </div>
+
+          <!-- Pedido (derecha; en pantallas angostas se abre desde abajo) -->
+          <div class="pos-cart-panel" id="posCartPanel">
+            <div class="drawer-drag-handle" id="drawerDragHandle"></div>
+            <div class="cart-header">
+              <h2>
+                <span class="cart-title-order"><span aria-hidden="true">🛒</span> Pedido</span>
+                <span class="cart-title-pay" id="payPanelTitle"><span aria-hidden="true">💰</span> Cobrar <small id="payForLabel"></small></span>
+              </h2>
+              <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <button class="btn btn-secondary btn-sm" id="btnClearCart" title="Borra todo lo que hay en el pedido">🗑️ Vaciar</button>
+                <button class="btn btn-secondary btn-sm btn-close-cart-drawer" id="btnCloseCartDrawer" title="Cerrar el pedido y seguir eligiendo" aria-label="Cerrar el pedido">✕ Cerrar</button>
+              </div>
+            </div>
+
+            <!-- A quién es el pedido -->
+            <div class="pos-table-badge" id="posTableBadge">
+              <div class="pos-table-badge-left">
+                <span class="pos-table-icon" id="posTableIcon" aria-hidden="true">🛍️</span>
+                <div class="pos-table-info">
+                  <span class="pos-table-sub">Pedido para:</span>
+                  <strong class="pos-table-name" id="posActiveTableName">Cliente en mostrador</strong>
+                  <span class="pos-table-client" id="posActiveTableClient" style="display: none;"></span>
+                </div>
+              </div>
+              <div class="pos-table-badge-right">
+                <button type="button" class="btn btn-secondary btn-xs" id="btnSwitchTable" title="Si el cliente está en una mesa, elígela aquí">🪑 Elegir mesa</button>
+                <button type="button" class="btn btn-secondary btn-xs" id="btnClearActiveTable" title="Dejar de usar la mesa y volver a venta en mostrador" style="display: none;">✕ Quitar mesa</button>
+              </div>
+            </div>
+
+            <!-- Lo que lleva el pedido -->
+            <div class="cart-items-list" id="posCartList">
+              <div class="cart-empty">
+                <div class="cart-empty-icon">🍺</div>
+                <p>Todavía no hay nada en el pedido</p>
+                <span>Toca una bebida para agregarla</span>
+              </div>
+            </div>
+
+            <!-- Totales -->
+            <div class="cart-footer">
+              <div class="cart-row total-row">
+                <span>TOTAL A COBRAR:</span>
+                <span id="posCartTotal">Q 0.00</span>
+              </div>
+
+              <!-- Solo cuando el pedido es de una mesa -->
+              <div class="table-cart-actions" id="tableCartActions" style="display: none;">
+                <button type="button" class="btn btn-secondary btn-save-table" id="btnSaveTableOrder" title="Guarda estas bebidas en la cuenta de la mesa, sin cobrar todavía">
+                  💾 Guardar en la mesa (sin cobrar)
+                </button>
+                <button type="button" class="btn btn-secondary" id="btnPreBillTable" title="Muestra o imprime la cuenta para el cliente, sin cobrar todavía">
+                  🧾 Ver cuenta
+                </button>
+              </div>
+
+              <button class="btn-checkout" id="btnPosCheckout" disabled>
+                <span aria-hidden="true">💰</span> <span id="btnPosCheckoutLabel">COBRAR</span> (<span id="btnPosCheckoutTotal">Q 0.00</span>)
+              </button>
+            </div>
+
+            <!-- COBRO: ya no es una ventana. Al tocar COBRAR, este mismo panel muestra los pasos para cobrar. -->
+            <div class="pay-panel" id="payPanel" role="region" aria-labelledby="payPanelTitle">
+              <div class="pay-panel-body">
+        <div class="pay-total-box">
+          <div class="pay-total-label">Total a cobrar</div>
+          <div class="pay-total-amount" id="payModalTotal">Q 0.00</div>
+          <div class="pay-surcharge" id="paySurcharge" style="display:none" aria-live="polite"></div>
+        </div>
+
+        <div class="pay-ask" id="payAsk">¿Cómo paga el cliente?</div>
+        <div class="payment-methods-grid" role="group" aria-labelledby="payAsk">
+          <button type="button" class="pay-method-btn active" data-method="efectivo">
+            <span class="icon" aria-hidden="true">💵</span>
+            <span>Efectivo</span>
+          </button>
+          <button type="button" class="pay-method-btn" data-method="tarjeta">
+            <span class="icon" aria-hidden="true">💳</span>
+            <span>Tarjeta</span>
+          </button>
+          <button type="button" class="pay-method-btn" data-method="transferencia">
+            <span class="icon" aria-hidden="true">📱</span>
+            <span>Transferencia</span>
+          </button>
+        </div>
+      </div>
+              <div class="pay-panel-footer">
+                <button type="button" class="btn btn-secondary" id="btnBackToOrder" title="Volver al pedido sin cobrar">← Volver</button>
+                <button type="button" class="btn btn-success btn-xl" id="btnConfirmPayment" style="flex: 1;">
+                  ✅ COBRAR
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Fondo oscuro cuando el pedido se abre desde abajo -->
+        <div class="cart-drawer-backdrop" id="cartDrawerBackdrop"></div>
+
+        <!-- Barra de abajo (tablet y celular) -->
+        <div class="tablet-floating-cart-bar" id="tabletFloatingCartBar">
+          <div class="tablet-floating-info" id="btnToggleCartDrawer">
+            <div class="cart-badge-container">
+              <span class="cart-icon" aria-hidden="true">🛒</span>
+              <span class="cart-badge" id="tabletCartBadge">0</span>
+            </div>
+            <div class="tablet-floating-details">
+              <div class="tablet-floating-subtitle">Total a cobrar:</div>
+              <div class="tablet-floating-total" id="tabletFloatingTotal">Q 0.00</div>
+            </div>
+            <div class="tablet-floating-peek" id="tabletFloatingPeek">
+              Ver pedido ▲
+            </div>
+          </div>
+          <button class="tablet-floating-btn-pay" id="tabletBtnQuickPay" disabled>
+            <span>💰 COBRAR</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- ================= MESAS ================= -->
+      <section id="viewTables" class="tab-content" style="display: none;">
+        <div class="tables-view-header">
+          <h2 class="tables-title"><span aria-hidden="true">🪑</span> Mesas</h2>
+
+          <div class="tables-head-actions">
+            <!-- Lo que falta cobrar entre todas las cuentas abiertas (solo se ve si hay algo) -->
+            <span class="tables-due" id="tablesDueChip" style="display: none;">💰 Por cobrar: <strong id="kpiActiveTablesRevenue">Q 0.00</strong></span>
+            <button class="btn btn-secondary btn-sm" id="btnRefreshTables" title="Vuelve a cargar las mesas" aria-label="Actualizar las mesas">
+              🔄 <span class="btn-label-optional">Actualizar</span>
+            </button>
+            <button class="btn btn-primary btn-sm" id="btnNewTableModal" title="Agregar una mesa o una barra nueva">
+              ➕ Agregar una mesa
+            </button>
+          </div>
+        </div>
+
+        <div class="tables-filters-bar">
+          <!-- Las zonas salen solas según las mesas que haya (si todas son de la misma zona, no se muestran) -->
+          <div class="tables-filter-group" id="tablesAreaFilters" role="group" aria-label="Filtrar por zona" style="display: none;"></div>
+
+          <div class="tables-filter-group" id="tablesStatusFilters" role="group" aria-label="Filtrar por estado">
+            <button class="table-filter-pill active" data-status="all">Todas <span class="pill-count" data-count="all"></span></button>
+            <button class="table-filter-pill" data-status="libre">🟢 Libres <span class="pill-count" data-count="libre"></span></button>
+            <button class="table-filter-pill" data-status="ocupada">🟠 Con cuenta <span class="pill-count" data-count="ocupada"></span></button>
+            <button class="table-filter-pill" data-status="cuenta_pedida">🟡 Pidieron la cuenta <span class="pill-count" data-count="cuenta_pedida"></span></button>
+          </div>
+        </div>
+
+        <div class="tables-grid" id="tablesGrid">
+          <!-- Se llena con JS -->
+        </div>
+      </section>
+
+      <!-- ================= INVENTARIO (SOLO ADMIN) ================= -->
+      <section id="viewInventory" class="tab-content" style="display: none;">
+        <div class="page-head">
+          <div>
+            <h2>📦 Inventario <span class="scope-chip" data-scope-chip></span></h2>
+            <p>Cuánto te queda de cada cosa. En rojo, lo que se está acabando. <span class="multi-only">Cada sucursal tiene sus propias cantidades.</span></p>
+          </div>
+
+          <div class="page-actions">
+            <button class="btn btn-primary btn-sm" id="btnNewInventoryItem">
+              ➕ Agregar un insumo nuevo
+            </button>
+            <button class="btn btn-success btn-sm" id="btnRegisterPurchase">
+              📦 Llegó mercadería
+            </button>
+            <button class="btn btn-danger btn-sm" id="btnRegisterWaste">
+              ⚠️ Se perdió o se dañó algo
+            </button>
+            <button class="btn btn-secondary btn-sm" id="btnInvCount">
+              📋 Contar inventario
+            </button>
+            <button class="btn btn-secondary btn-sm multi-only" id="btnTransfer" title="Pasar botellas o piezas de esta tienda a la otra" hidden>
+              🚚 Pasar a otra tienda
+            </button>
+            <button class="btn btn-secondary btn-sm multi-only" id="btnTransfersHistory" title="Lo que se ha pasado entre tiendas" hidden>
+              📜 Ver traspasos
+            </button>
+          </div>
+        </div>
+
+        <!-- Buscar, ver solo lo que se acaba, y (si se quiere) los costos -->
+        <div class="inv-toolbar">
+          <div class="search-box inv-search">
+            <input type="search" id="invSearch" placeholder="Buscar en el inventario" aria-label="Buscar en el inventario" autocomplete="off">
+          </div>
+          <div class="tables-filter-group" id="invFilters" role="group" aria-label="Filtrar el inventario">
+            <button type="button" class="table-filter-pill active" data-inv-filter="all">Todo <span class="pill-count" id="invTotalItems">0</span></button>
+            <button type="button" class="table-filter-pill" data-inv-filter="low">🔴 Se está acabando <span class="pill-count" id="invLowStockCount">0</span></button>
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm" id="btnInvExtra" aria-pressed="false">📊 Ver costos y más</button>
+          <span class="inv-value" id="invValueChip" hidden>Valor del inventario: <strong id="invTotalValue">Q 0.00</strong></span>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table inv-table" id="inventoryTable">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Cantidad que hay</th>
+                <th>Estado</th>
+                <th class="inv-extra">Avisar si baja de</th>
+                <th class="inv-extra">Costo de cada uno</th>
+                <th class="inv-extra">Valor total</th>
+                <th class="inv-extra">Proveedor</th>
+                <th>Qué hacer</th>
+              </tr>
+            </thead>
+            <tbody id="inventoryTableBody">
+              <!-- Se llena con JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================= MENÚ (SOLO ADMIN) ================= -->
+      <section id="viewProducts" class="tab-content" style="display: none;">
+        <div class="page-head">
+          <div>
+            <h2>📋 Menú: lo que vendes <span class="scope-chip" data-scope-chip></span></h2>
+            <p>Lo que aparece en “Vender”. Cambia el precio o pausa lo que se acabó. <span class="multi-only">El menú y los precios son los mismos en todas las sucursales; “Pausar” solo afecta a la sucursal elegida arriba.</span></p>
+          </div>
+          <div class="page-actions">
+            <button class="btn btn-secondary btn-sm" id="btnManageCategories">
+              📁 Secciones del menú
+            </button>
+            <button class="btn btn-primary btn-sm btn-prices" id="btnSetPrices" style="display: none;">
+              💲 Poner precios <span class="prices-count" id="pricesPendingCount"></span>
+            </button>
+            <button class="btn btn-primary btn-sm" id="btnNewProduct">
+              ➕ Agregar un producto
+            </button>
+          </div>
+        </div>
+
+        <!-- Buscar un producto y ver solo lo que se vende o lo que está pausado -->
+        <div class="inv-toolbar">
+          <div class="search-box inv-search">
+            <input type="search" id="menuSearch" placeholder="Buscar en el menú" aria-label="Buscar en el menú" autocomplete="off">
+          </div>
+          <div class="tables-filter-group" id="menuFilters" role="group" aria-label="Filtrar el menú">
+            <button type="button" class="table-filter-pill active" data-menu-filter="all">Todos <span class="pill-count" data-menu-count="all"></span></button>
+            <button type="button" class="table-filter-pill" data-menu-filter="sale">🟢 A la venta <span class="pill-count" data-menu-count="sale"></span></button>
+            <button type="button" class="table-filter-pill" data-menu-filter="paused">⏸️ Pausados <span class="pill-count" data-menu-count="paused"></span></button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th class="col-price">Precio</th>
+                <th>Qué hacer</th>
+              </tr>
+            </thead>
+            <tbody id="productsTableBody">
+              <!-- Se llena con JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================= VENTAS HECHAS (SOLO ADMIN) ================= -->
+      <section id="viewSales" class="tab-content" style="display: none;">
+        <div class="page-head">
+          <div>
+            <h2>🧾 Ventas hechas <span class="scope-chip" data-scope-chip></span></h2>
+            <p>Mira todo lo que se ha vendido, vuelve a imprimir un ticket o baja la lista a Excel.</p>
+          </div>
+          <button class="btn btn-secondary btn-sm" id="btnExportSalesCsv" title="Descarga la lista para abrirla en Excel">
+            📥 Bajar lista a Excel
+          </button>
+        </div>
+
+        <div class="filter-bar">
+          <label class="filter-field">
+            <span>Desde el día</span>
+            <input type="date" id="salesFilterStart" class="form-control">
+          </label>
+          <label class="filter-field">
+            <span>Hasta el día</span>
+            <input type="date" id="salesFilterEnd" class="form-control">
+          </label>
+          <label class="filter-field">
+            <span>Forma de pago</span>
+            <select id="salesFilterPayment" class="form-control">
+              <option value="todos">Todas</option>
+              <option value="efectivo">Efectivo</option>
+              <option value="tarjeta">Tarjeta</option>
+              <option value="transferencia">Transferencia</option>
+              <option value="mixto">Mixto (ventas antiguas)</option>
+            </select>
+          </label>
+          <label class="filter-field">
+            <span>Estado</span>
+            <select id="salesFilterStatus" class="form-control">
+              <option value="todas">Todas</option>
+              <option value="completada">Solo válidas</option>
+              <option value="anulada">Solo anuladas</option>
+            </select>
+          </label>
+          <label class="filter-field filter-field-wide">
+            <span>Buscar por número de venta o por quién cobró</span>
+            <input type="text" id="salesFilterQuery" placeholder="Escribe aquí para buscar" class="form-control">
+          </label>
+          <button class="btn btn-primary" id="btnFilterSales">🔍 Buscar</button>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Número de venta</th>
+                <th>Fecha y hora</th>
+                <th class="col-branch">Sucursal</th>
+                <th>Quién cobró</th>
+                <th>Forma de pago</th>
+                <th>Subtotal</th>
+                <th>Descuento</th>
+                <th>Total</th>
+                <th>Qué hacer</th>
+              </tr>
+            </thead>
+            <tbody id="salesTableBody">
+              <!-- Se llena con JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================= CORTES DE CAJA (SOLO ADMIN) ================= -->
+      <section id="viewShifts" class="tab-content" style="display: none;">
+        <div class="page-head">
+          <div>
+            <h2>💰 Cortes de caja <span class="scope-chip" data-scope-chip></span></h2>
+            <p>Aquí ves cada vez que se abrió y se cerró la caja, y si el dinero cuadró o no. Toca un corte para ver todo el detalle.</p>
+          </div>
+          <button class="btn btn-primary btn-sm" id="btnTriggerShiftModal">
+            💰 Abrir o cerrar mi caja
+          </button>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width: 45px;">#</th>
+                <th>Quién</th>
+                <th class="col-branch">Sucursal</th>
+                <th>Día y horario</th>
+                <th>Dinero inicial</th>
+                <th>Ventas</th>
+                <th>Debería haber</th>
+                <th>Se contó</th>
+                <th>Diferencia (sobra o falta)</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody id="shiftsTableBody">
+              <!-- Se llena con JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================= PERSONAL (SOLO ADMIN) ================= -->
+      <section id="viewUsers" class="tab-content" style="display: none;">
+        <div class="page-head">
+          <div>
+            <h2>👥 Personal</h2>
+            <p>Aquí agregas a las personas que usan el sistema y decides qué puede hacer cada una.</p>
+          </div>
+          <button class="btn btn-primary btn-sm" id="btnNewUser">
+            ➕ Agregar una persona
+          </button>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Usuario</th>
+                <th>Puede</th>
+                <th class="col-branch">Sucursales</th>
+                <th>Estado</th>
+                <th>Desde cuándo</th>
+                <th>Qué hacer</th>
+              </tr>
+            </thead>
+            <tbody id="usersTableBody">
+              <!-- Se llena con JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================= AJUSTES (SOLO ADMIN) ================= -->
+      <section id="viewSettings" class="tab-content" style="display: none;">
+        <div class="settings-card" id="branchesCard">
+          <div class="settings-card-head">
+            <div>
+              <h2 style="margin-bottom: 0.4rem;">🏬 Sucursales</h2>
+              <p class="help-text">Cada sucursal tiene sus propias existencias, mesas, cajas y ventas. El menú, los precios y los datos del negocio son los mismos.</p>
+            </div>
+            <button type="button" class="btn btn-primary btn-sm" id="btnNewBranch">➕ Agregar una sucursal</button>
+          </div>
+          <div id="branchesList" class="branches-list"><!-- Se llena con JS --></div>
+        </div>
+
+        <div class="settings-card">
+          <h2 style="margin-bottom: 0.4rem;">⚙️ Datos del negocio</h2>
+          <p class="help-text" style="margin-bottom: 1.5rem;">Estos datos salen impresos en los tickets.</p>
+
+          <form id="settingsForm">
+            <div class="form-group">
+              <label class="form-label" for="setBusinessName">Nombre del negocio</label>
+              <input type="text" id="setBusinessName" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="setTagline">Frase o lema (opcional)</label>
+              <input type="text" id="setTagline" class="form-control">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="setAddress">Dirección</label>
+              <input type="text" id="setAddress" class="form-control">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="setPhone">Teléfono</label>
+              <input type="text" id="setPhone" class="form-control" inputmode="tel">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="setTaxId">NIT (número de identificación tributaria)</label>
+              <input type="text" id="setTaxId" class="form-control">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="setTicketFooter">Mensaje al final del ticket</label>
+              <textarea id="setTicketFooter" class="form-control" rows="2"></textarea>
+            </div>
+
+            <div class="settings-section">
+              <h3>💳 Pagar con tarjeta</h3>
+              <div class="form-group">
+                <label class="form-label" for="setCardSurcharge">Recargo al pagar con tarjeta (%)</label>
+                <input type="number" id="setCardSurcharge" class="form-control" min="0" max="50" step="0.5" inputmode="decimal" placeholder="5">
+                <small class="form-hint">Se suma al total solo cuando el cliente paga con tarjeta. Pon 0 para no cobrar recargo. Efectivo y transferencia no llevan recargo.</small>
+              </div>
+            </div>
+
+            <div class="settings-section">
+              <h3>📦 Cuando se acaba algo</h3>
+              <div class="form-group">
+                <label class="check-row" for="setBlockNoStock" style="display:flex;gap:.6rem;align-items:center;cursor:pointer;">
+                  <input type="checkbox" id="setBlockNoStock" checked style="width:1.3rem;height:1.3rem;">
+                  <span>No dejar vender lo que no tiene stock en la tienda</span>
+                </label>
+                <small class="form-hint">Lo que no tiene existencias en la tienda sale marcado como <strong>Sin stock</strong> y no se puede agregar al pedido. Si algún día necesitas vender aunque el inventario diga cero, quita esta marca y guarda.</small>
+              </div>
+            </div>
+
+            <div class="settings-section">
+              <h3>🍹 Opciones al preparar una michelada</h3>
+              <p class="help-text" style="margin-bottom: 1rem;">
+                Escribe cada opción separada por una coma. Estas opciones salen cuando el cliente pide su michelada personalizada.
+              </p>
+
+              <div class="form-group">
+                <label class="form-label" for="setEscarchados">Tipos de escarchado (el borde del vaso)</label>
+                <input type="text" id="setEscarchados" class="form-control" placeholder="Ej: Chamoy con Tajín, Chamoy con Miguelito, Solo Sal y Limón">
+                <small class="form-hint">Separa cada opción con una coma ( , )</small>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="setSalsas">Niveles de salsa o picante</label>
+                <input type="text" id="setSalsas" class="form-control" placeholder="Ej: Normal de la casa, Suave, Bien cargado, Sin salsas">
+                <small class="form-hint">Separa cada opción con una coma ( , )</small>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg" style="margin-top: 1rem;">
+              💾 Guardar cambios
+            </button>
+          </form>
+
+          <!-- Zona peligrosa -->
+          <div class="danger-zone">
+            <h3>🧹 Borrar los datos de prueba</h3>
+            <p class="help-text">
+              Usa esto <strong>una sola vez</strong>, cuando ya vayas a empezar a trabajar de verdad. Lo que se borre <strong>no se puede recuperar</strong> y se borra de <strong>todas las sucursales</strong>.
+            </p>
+
+            <div class="btn-row">
+              <button type="button" class="btn btn-danger" id="btnResetSales">
+                🧹 Borrar ventas y cajas de prueba
+              </button>
+              <button type="button" class="btn btn-secondary btn-danger-soft" id="btnResetCatalog">
+                🗑️ Borrar todo el menú de prueba
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ================= CUADROS (VENTANAS) ================= -->
+
+  <!-- Cuadro: Ticket -->
+  <div class="modal-overlay" id="modalTicket" role="dialog" aria-modal="true" aria-labelledby="ticketModalTitle">
+    <div class="modal-content" style="max-width: 440px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="ticketModalTitle">✅ Venta hecha</h3>
+        <button class="modal-close" onclick="app.closeModal('modalTicket')" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 0.75rem;">
+        <button class="btn btn-success btn-block btn-xl" id="btnNextCustomer" style="margin-bottom: 0.75rem;">
+          ➕ NUEVA VENTA
+        </button>
+
+        <div class="thermal-ticket-container">
+          <div class="thermal-ticket" id="thermalTicketContent">
+            <!-- Se llena con JS -->
+          </div>
+        </div>
+
+        <button type="button" class="print-prefs-link" onclick="app.openPrinterModal()">⚙️ Impresora: <strong data-print-label>con vista previa</strong> · cambiar</button>
+
+        <div class="void-bar" id="voidBar" style="display: none;">
+          <button type="button" class="btn btn-secondary btn-danger-soft btn-block" id="btnVoidSale">
+            🚫 Anular esta venta
+          </button>
+          <p class="help-text">Úsalo si se cobró por error o el cliente ya no la quiso. El inventario se devuelve y queda anotado quién la anuló.</p>
+        </div>
+      </div>
+      <div class="modal-footer modal-footer-split">
+        <button class="btn btn-secondary" onclick="app.closeModal('modalTicket')">Cerrar</button>
+        <button class="btn btn-primary" onclick="app.printTicket()">
+          🖨️ Imprimir ticket
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cuadro: Personalizar bebida -->
+  <div class="modal-overlay" id="modalCustomization" role="dialog" aria-modal="true" aria-labelledby="custModalTitle">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="custModalTitle">Personalizar bebida</h3>
+        <button class="modal-close" onclick="app.closeModal('modalCustomization')" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- Solo si el producto tiene presentaciones (por ejemplo Gallo de vidrio o de lata) -->
+        <div class="form-group" id="custOptionGroup" style="display: none;">
+          <span class="form-label" id="custOptionLabel">¿Cuál prefiere el cliente?</span>
+          <div id="custOptionList" class="opt-radio-grid" role="radiogroup" aria-labelledby="custOptionLabel">
+            <!-- Se llena con JS -->
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Escarchado (el borde del vaso):</label>
+          <div id="custEscarchadoList" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+            <!-- Se llena con JS -->
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="custSauceLevel">Nivel de salsa o picante:</label>
+          <select id="custSauceLevel" class="form-control">
+            <!-- Se llena con JS -->
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="custExtraNotes">¿Algo más que pidió el cliente? (opcional)</label>
+          <input type="text" id="custExtraNotes" class="form-control" placeholder="Ej: sin hielo, salsa aparte">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="app.closeModal('modalCustomization')">Cancelar</button>
+        <button class="btn btn-primary btn-lg" id="btnConfirmCustomization" style="flex: 1;">✅ Agregar al pedido</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cuadro: ¿Cuál quiere el cliente? (vidrio / lata...) -->
+  <div class="modal-overlay" id="modalOption" role="dialog" aria-modal="true" aria-labelledby="optModalTitle">
+    <div class="modal-content opt-modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="optModalTitle">¿Cuál quiere el cliente?</h3>
+        <button class="modal-close" onclick="app.closeModal('modalOption')" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="opt-product-name" id="optProductName"></p>
+        <div class="opt-choices" id="optChoices">
+          <!-- Se llena con JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cuadro: Secciones del menú -->
+  <div class="modal-overlay" id="modalCategories" role="dialog" aria-modal="true" aria-labelledby="catModalTitle">
+    <div class="modal-content" style="max-width: 680px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="catModalTitle">📁 Secciones del menú</h3>
+        <button class="modal-close" onclick="app.closeModal('modalCategories')" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="hint-box">
+          Las secciones separan el menú: Cervezas, Micheladas, Comidas, Postres… Escribe el nombre de la nueva y toca “Agregar”.
+        </div>
+
+        <form id="newCategoryForm" class="new-category-form">
+          <div class="nc-name">
+            <label class="form-label" for="newCatName">Nombre de la sección</label>
+            <input type="text" id="newCatName" class="form-control" placeholder="Ej: Comidas, Alitas, Ceviches" maxlength="40" required>
+          </div>
+          <button type="submit" class="btn btn-primary">➕ Agregar</button>
+        </form>
+
+        <p class="help-text" style="margin: 0 0 0.5rem;">Con las flechas ⬆️ ⬇️ cambias el orden en que salen en “Vender”.</p>
+        <div id="categoriesList" class="cat-list"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="app.closeModal('modalCategories')">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cuadro: Abrir / cerrar caja -->
+  <div class="modal-overlay" id="modalShift" role="dialog" aria-modal="true" aria-labelledby="shiftModalTitle">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="shiftModalTitle">Mi caja</h3>
+        <button class="modal-close" onclick="app.closeModal('modalShift')" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="modal-body" id="shiftModalBody">
+        <!-- Se llena con JS (abrir o cerrar según el caso) -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Cuadro: Insumo de inventario -->
+  <div class="modal-overlay" id="modalInventoryItem" role="dialog" aria-modal="true" aria-labelledby="invItemModalTitle">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="invItemModalTitle">Agregar un insumo nuevo</h3>
+        <button class="modal-close" onclick="app.closeModal('modalInventoryItem')" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="invItemForm">
+          <input type="hidden" id="invItemId">
+
+          <div class="form-group">
+            <label class="form-label" for="invItemName">Nombre</label>
+            <input type="text" id="invItemName" class="form-control" placeholder="Ej: Barril de cerveza clara, Clamato" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="invItemCategory">Tipo</label>
+            <select id="invItemCategory" class="form-control" required>
+              <option value="Líquidos Barril">Líquidos de barril</option>
+              <option value="Líquidos Insumo">Líquidos para preparar (Clamato, jugos, salsas)</option>
+              <option value="Cerveza Embotellada">Cerveza embotellada (por pieza)</option>
+              <option value="Licores Líquido">Licores (ron, tequila, vodka…)</option>
+              <option value="Escarchados">Escarchados y polvos (por gramo)</option>
+              <option value="Refrescos">Refrescos y mezcladores (por pieza)</option>
+              <option value="Botanas">Boquitas y snacks</option>
+            </select>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label" for="invItemUnit">¿En qué se mide?</label>
+              <select id="invItemUnit" class="form-control" required>
+                <option value="ml">Mililitros (ml)</option>
+                <option value="pza">Piezas (pza)</option>
+                <option value="g">Gramos (g)</option>
+              </select>
+              <small class="form-hint">Lo que se sirve o se mezcla (licor, jugo, Clamato) se mide en <strong>ml</strong>; lo que se vende entero, en <strong>piezas</strong>.</small>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="invItemStock">Cantidad que hay ahora</label>
+              <input type="number" step="any" min="0" id="invItemStock" class="form-control" inputmode="decimal" required>
+              <small class="form-hint" id="invItemStockHint" style="display: none;">Para cambiar esta cantidad usa “Llegó mercadería” (para sumar) o “Se perdió o se dañó algo” (para restar).</small>
+              <small class="form-hint multi-only" id="invItemBranchHint">Esta cantidad es de la sucursal elegida arriba. En las demás sucursales el insumo aparece con 0.</small>
+            </div>
+          </div>
+
+          <div class="ml-box" id="invConvertMlBox" style="display: none;">
+            <div class="ml-box-text"><strong>💧 ¿Prefieres medirlo en ml?</strong><span>Es más fácil para las recetas. El sistema convierte solo lo que hay, el costo y las recetas, y tus bebidas cuestan lo mismo.</span></div>
+            <button type="button" class="btn btn-secondary btn-sm" id="btnInvConvertMl">🔄 Pasar a ml</button>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label" for="invItemMinStock">Avisar cuando quede menos de</label>
+              <input type="number" step="any" min="0" id="invItemMinStock" class="form-control" inputmode="decimal" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="invItemCost">Costo de cada <span id="invCostUnit">uno</span> (Q)</label>
+              <input type="number" step="any" min="0" id="invItemCost" class="form-control" inputmode="decimal" required>
+            </div>
+          </div>
+
+          <div class="pack-box" id="invPackBox">
+            <div class="pack-box-head">🍾 ¿Lo compras en botella, caja o paquete? <span class="pack-opt">(opcional)</span></div>
+            <p class="help-text">Díselo al sistema y podrás anotar “llegaron 3 botellas” y contar “2 botellas y 8 oz”. Él hace la conversión solo.</p>
+            <div class="form-row-2">
+              <div class="form-group">
+                <label class="form-label" for="invPackName">Cómo se llama</label>
+                <input type="text" id="invPackName" class="form-control" placeholder="botella" maxlength="30" list="invPackNames" autocomplete="off">
+                <datalist id="invPackNames"><option value="botella"></option><option value="litro"></option><option value="caja"></option><option value="paquete"></option><option value="lata"></option><option value="barril"></option></datalist>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="invPackSize">Cuánto trae cada una</label>
+                <div class="pack-size-row">
+                  <input type="number" step="any" min="0" id="invPackSize" class="form-control" inputmode="decimal" placeholder="Ej: 750">
+                  <select id="invPackUnit" class="form-control" aria-label="Medida de lo que trae"></select>
+                </div>
+              </div>
+            </div>
+            <small class="form-hint" id="invPackHint"></small>
+            <div class="form-group" id="invPackCostGroup">
+              <label class="form-label" for="invPackCost">Lo que cuesta cada una (Q)</label>
+              <input type="number" step="any" min="0" id="invPackCost" class="form-control" inputmode="decimal" placeholder="Ej: 190">
+              <small class="form-hint">Si lo escribes, el costo de cada <span class="inv-cost-unit-copy">uno</span> se calcula solo.</small>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="invItemSupplier">Proveedor (opcional)</label>
+            <input type="text" id="invItemSupplier" class="form-control" placeholder="Ej: Cervecería Centro Americana">
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block btn-lg">💾 Guardar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cuadro: Pasar un insumo a ml -->
+  <div class="modal-overlay" id="modalConvertMl" role="dialog" aria-modal="true" aria-labelledby="convertMlTitle">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="convertMlTitle">🔄 Pasar a ml</h3>
+        <button class="modal-close" onclick="app.closeModal('modalConvertMl')" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="convertMlItemId">
+        <div class="hint-box" id="convertMlIntro">Se convierte todo solo y tus bebidas cuestan lo mismo. Antes de cambiar, el sistema guarda una copia de seguridad.</div>
+
+        <div class="form-group" id="convertMlPerBox">
+          <label class="form-label" for="convertMlPer">¿Cuántos ml trae cada <span id="convertMlPieceWord">pieza</span>?</label>
+          <input type="number" id="convertMlPer" class="form-control" step="any" min="1" inputmode="decimal" placeholder="Ej: 500">
+          <div class="ml-chips" id="convertMlChips" role="group" aria-label="Medidas comunes">
+            <button type="button" class="ml-chip" data-ml="250">250</button>
+            <button type="button" class="ml-chip" data-ml="350">350</button>
+            <button type="button" class="ml-chip" data-ml="500">500</button>
+            <button type="button" class="ml-chip" data-ml="750">750</button>
+            <button type="button" class="ml-chip" data-ml="1000">1000</button>
+          </div>
+          <small class="form-hint">Búscalo en la etiqueta (por ejemplo, 750 ml una botella de licor, 355 ml una lata).</small>
+        </div>
+
+        <div class="ml-pack-opt" id="convertMlPackOpt" style="display: none;">
+          <label class="ml-check"><input type="checkbox" id="convertMlPackOn" checked> <span>Guardar también como botella para anotar compras (“llegaron 2 botellas”)</span></label>
+          <input type="text" id="convertMlPackName" class="form-control form-control-sm" value="botella" maxlength="30" aria-label="Cómo se llama" list="invPackNames" autocomplete="off">
+        </div>
+
+        <div id="convertMlPreview" class="ml-preview" aria-live="polite"></div>
+
+        <button type="button" class="btn btn-primary btn-block btn-lg" id="btnConvertMlGo" disabled>🔄 Pasar a ml</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cuadro: Llegó mercadería (3 pasos: qué llegó, cuánto, cuánto pagaste) -->
+  <div class="modal-overlay" id="modalPurchase" role="dialog" aria-modal="true" aria-labelledby="purchaseModalTitle">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="purchaseModalTitle">📦 Llegó mercadería</h3>
+        <button class="modal-close" onclick="app.closeModal('modalPurchase')" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="modal-body">
+        <ul class="buy-done" id="purchaseDone" hidden aria-live="polite"></ul>
+        <form id="purchaseForm" novalidate>
+          <div class="buy-step">
+            <label class="buy-q" for="purchaseItemId"><span class="buy-n">1</span> ¿Qué llegó?</label>
+            <select id="purchaseItemId" class="form-control"></select>
+          </div>
+
+          <div class="buy-step" id="purchaseStep2" hidden>
+            <label class="buy-q" for="purchaseQty"><span class="buy-n">2</span> ¿Cuánto llegó?</label>
+            <div class="buy-qty-row">
+              <input type="number" step="any" min="0" id="purchaseQty" class="form-control" placeholder="Ej: 2" inputmode="decimal">
+              <div class="buy-units" id="purchaseUnits" role="radiogroup" aria-label="En qué lo cuentas"></div>
+            </div>
+            <small class="form-hint buy-now" id="purchasePreview" aria-live="polite"></small>
+          </div>
+
+          <div class="buy-step" id="purchaseStep3" hidden>
+            <label class="buy-q" for="purchaseTotal"><span class="buy-n">3</span> ¿Cuánto pagaste en total? <span class="pack-opt">(si quieres anotarlo)</span></label>
+            <input type="number" step="any" min="0" id="purchaseTotal" class="form-control" placeholder="Q" inputmode="decimal">
+            <small class="form-hint" id="purchaseCostHint" aria-live="polite"></small>
+          </div>
+
+          <details class="buy-more" id="purchaseMore">
+            <summary>Factura o nota <small>(no hace falta)</small></summary>
+            <input type="text" id="purchaseInvoice" class="form-control" placeholder="Número de factura" aria-label="Número de factura">
+            <input type="text" id="purchaseNotes" class="form-control" placeholder="Nota" aria-label="Nota">
+          </details>
+
+          <button type="submit" class="btn btn-success btn-block btn-lg" id="btnPurchaseSave">✅ Guardar</button>
+          <button type="button" class="btn btn-secondary btn-block" id="btnPurchaseDone" onclick="app.closeModal('modalPurchase')">Cancelar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cuadro: Contar inventario (lo que hay de verdad contra lo que dice el sistema) -->
+  <div class="modal-overlay" id="modalCount" role="dialog" aria-modal="true" aria-labelledby="countModalTitle">
+    <div class="modal-content modal-lg count-modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="countModalTitle">📋 Contar inventario</h3>
+        <button class="modal-close" onclick="app.closeModal('modalCount')" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="modal-body count-body">
+        <div class="count-tabs" role="group" aria-label="Qué quieres ver">
+          <button type="button" class="table-filter-pill active" data-count-tab="new">📝 Contar ahora</button>
+          <button type="button" class="table-filter-pill" data-count-tab="history">🕘 Conteos anteriores</button>
+        </div>
+
+        <div id="countPaneNew">
+          <div class="hint-box">Cuenta lo que hay <strong>de verdad</strong> en barra y bodega y escríbelo. El sistema te dice cuánto <strong>debería</strong> haber y cuánto dinero es la diferencia. Lo que dejes vacío no se cuenta. Lo mejor es contar al cerrar, cuando ya no se está vendiendo.<br><strong>Solo anotar</strong> deja el inventario como está; <strong>Anotar y corregir</strong> lo deja exactamente como lo contaste.</div>
+          <div class="count-tools">
+            <div class="search-box inv-search">
+              <input type="search" id="countSearch" placeholder="Buscar" aria-label="Buscar en el conteo" autocomplete="off">
+            </div>
+            <select id="countCat" class="form-control" aria-label="Tipo de insumo"></select>
+            <input type="text" id="countNotes" class="form-control count-notes" maxlength="300" placeholder="Nota (opcional). Ej: cierre del sábado" aria-label="Nota del conteo">
+          </div>
+          <div id="countRows" class="count-rows"></div>
+        </div>
+
+        <div id="countPaneHistory" hidden></div>
+        <div id="countPaneResult" hidden></div>
+      </div>
+      <div class="count-foot" id="countFoot">
+        <div class="count-summary" id="countSummary" aria-live="polite"></div>
+        <div class="count-actions">
+          <button type="button" class="btn btn-secondary btn-lg" id="btnCountSave">💾 Solo anotar</button>
+          <button type="button" class="btn btn-primary btn-lg" id="btnCountAdjust">✅ Anotar y corregir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cuadro: Pasar mercadería de una tienda a otra (por botellas) -->
+  <div class="modal-overlay" id="modalTransfer" role="dialog" aria-modal="true" aria-labelledby="transferModalTitle">
+    <div class="modal-content modal-lg transfer-modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="transferModalTitle">🚚 Pasar a otra tienda</h3>
+        <button class="modal-close" onclick="app.closeModal('modalTransfer')" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="modal-body" id="trBody">
+        <div id="trPick">
+          <div class="tr-route">
+            <div class="tr-from"><small>Sale de</small><strong id="trFrom">—</strong></div>
+            <div class="tr-arrow" aria-hidden="true">➜</div>
+            <div class="tr-to">
+              <label for="trTo"><small>Va para</small></label>
+              <select id="trTo" class="form-control"></select>
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm" id="trSwap" title="Cambiar el sentido: que salga de la otra tienda">↔ Al revés</button>
+          </div>
+          <div class="search-box tr-search">
+            <input type="search" id="trSearch" placeholder="Buscar lo que quieres pasar" aria-label="Buscar lo que quieres pasar" autocomplete="off">
+          </div>
+          <div class="tr-list" id="trList"></div>
+          <label class="tr-note" for="trNotes"><small>Nota (si quieres)</small>
+            <input type="text" id="trNotes" class="form-control" maxlength="300" placeholder="Ej: para el evento del sábado" autocomplete="off">
+          </label>
+        </div>
+        <div id="trDone" class="tr-done" hidden></div>
+      </div>
+      <div class="count-foot" id="trFoot">
+        <div class="tr-summary" id="trSummary" aria-live="polite">Escribe cuántas botellas quieres pasar.</div>
+        <div class="count-actions">
+          <button type="button" class="btn btn-secondary btn-lg" onclick="app.closeModal('modalTransfer')">Cancelar</button>
+          <button type="button" class="btn btn-success btn-lg" id="btnTransferGo" disabled>🚚 Pasar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cuadro: Traspasos entre tiendas (lo que ya se pasó) -->
+  <div class="modal-overlay" id="modalTransfers" role="dialog" aria-modal="true" aria-labelledby="transfersModalTitle">
+    <div class="modal-content modal-lg">
+      <div class="modal-header">
+        <h3 class="modal-title" id="transfersModalTitle">📜 Traspasos entre tiendas</h3>
+        <button class="modal-close" onclick="app.closeModal('modalTransfers')" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="modal-body" id="transfersBody"></div>
+    </div>
+  </div>
+
+  <!-- Cuadro: Se perdió algo -->
+  <div class="modal-overlay" id="modalWaste" role="dialog" aria-modal="true" aria-labelledby="wasteModalTitle">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="wasteModalTitle">⚠️ Se perdió o se dañó algo</h3>
+        <button class="modal-close" onclick="app.closeModal('modalWaste')" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="hint-box">Úsalo cuando se derrama, se rompe o se echa a perder algo. La cantidad que escribas se <strong>resta</strong> del inventario.</div>
+        <form id="wasteForm">
+          <div class="form-group">
+            <label class="form-label" for="wasteItemId">¿Qué se perdió?</label>
+            <select id="wasteItemId" class="form-control" required></select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="wasteQty">¿Cuánto se perdió?</label>
+            <input type="number" step="any" min="0" id="wasteQty" class="form-control" placeholder="Ej: 0.5 litros o 2 botellas" inputmode="decimal" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="wasteReason">¿Qué pasó?</label>
+            <select id="wasteReason" class="form-control" required>
+              <option value="merma_derrame">Se derramó o salió mucha espuma</option>
+              <option value="merma_rotura">Se rompió una botella</option>
+              <option value="merma_caducidad">Se venció o está en mal estado</option>
+              <option value="ajuste">Corrección porque conté el inventario</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="wasteNotes">Si quieres, cuéntanos más (opcional)</label>
+            <textarea id="wasteNotes" class="form-control" rows="2" placeholder="Ej: se cayó la botella al servir"></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-danger btn-block btn-lg">Restar del inventario</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cuadro: Producto y receta -->
+  <div class="modal-overlay" id="modalProduct" role="dialog" aria-modal="true" aria-labelledby="productModalTitle">
+    <div class="modal-content modal-lg">
+      <div class="modal-header">
+        <h3 class="modal-title" id="productModalTitle">Agregar un producto</h3>
+        <button class="modal-close" onclick="app.closeModal('modalProduct')" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="productForm">
+          <input type="hidden" id="prodEditId">
+
+          <div class="form-group prod-photo-group">
+            <span class="form-label" id="prodPhotoLabel">Foto (opcional)</span>
+            <div class="prod-photo-row">
+              <div class="prod-photo-preview" id="prodPhotoPreview" role="img" aria-labelledby="prodPhotoLabel"></div>
+              <div class="prod-photo-actions">
+                <button type="button" class="btn btn-secondary" id="btnProdPhotoPick">📷 Elegir foto</button>
+                <button type="button" class="btn btn-secondary btn-danger-soft" id="btnProdPhotoRemove">🗑️ Quitar foto</button>
+                <input type="file" id="prodPhotoInput" accept="image/*" hidden>
+                <p class="help-text" id="prodPhotoHint"></p>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="prodName">Nombre</label>
+            <input type="text" id="prodName" class="form-control" placeholder="Ej: Michelada Especial (1 litro)" required>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label class="form-label" for="prodCategory">Sección</label>
+              <select id="prodCategory" class="form-control" required></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="prodPrice">Precio (Q)</label>
+              <input type="number" step="0.01" min="0" id="prodPrice" class="form-control" placeholder="Ej: 35" inputmode="decimal" required>
+            </div>
+          </div>
+
+          <!-- Solo al cambiar un producto que ya existe -->
+          <div class="form-group" id="prodActiveGroup" style="display: none;">
+            <label class="check-row" for="prodIsActive">
+              <input type="checkbox" id="prodIsActive" checked>
+              <span>Se vende ahora <small>(si lo desmarcas, no aparece en “Vender”)</small></span>
+            </label>
+          </div>
+
+          <details class="prod-more" id="prodMore">
+            <summary>⚙️ Más opciones <small>(no hace falta tocarlas)</small></summary>
+            <div class="prod-more-body">
+              <div class="form-group">
+                <label class="form-label" for="prodDescription">Descripción</label>
+                <input type="text" id="prodDescription" class="form-control" placeholder="Qué lleva o cómo se sirve">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="prodBadge">Etiqueta que se ve en la tarjeta</label>
+                <input type="text" id="prodBadge" class="form-control" placeholder="Ej: ⭐ La más vendida">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="prodStockMode">¿Quieres que el inventario baje solo cuando se venda?</label>
+                <select id="prodStockMode" class="form-control">
+                  <option value="none">No llevo inventario de este</option>
+                  <option value="direct">Sí, se vende tal cual</option>
+                  <option value="recipe">Sí, se prepara con receta</option>
+                </select>
+                <p class="help-text">“Tal cual” es para botella, lata o bolsa que se cuenta por pieza. “Receta” es para lo que preparas con ingredientes, o para una botella medida en ml (se anota cuántos ml lleva). Si no llevas inventario, déjalo en “No”: el producto se vende igual.</p>
+              </div>
+
+              <!-- Si se vende tal cual -->
+              <div id="sectionDirectSale" style="display: none;">
+                <div class="form-group">
+                  <label class="form-label" for="prodDirectItem">¿Cuál es? (baja 1 por cada venta)</label>
+                  <select id="prodDirectItem" class="form-control"></select>
+                </div>
+              </div>
+
+              <!-- Si se prepara con receta -->
+              <div id="sectionRecipeBuilder" style="display: none;">
+                <div class="recipe-head">
+                  <h4>🍹 Lo que lleva (baja del inventario al vender)</h4>
+                  <button type="button" class="btn btn-secondary btn-sm" id="btnAddRecipeIngredient">➕ Agregar ingrediente</button>
+                </div>
+
+                <p class="help-text">La cantidad va en la medida del ingrediente (se ve a la derecha). Los líquidos se anotan en <strong>ml</strong>: un shot = 45 ml, media botella de 750 ml = 375. Lo que va por pieza puede llevar decimales: ¾ = 0.75, media = 0.5.</p>
+                <div id="recipeIngredientsList" style="display: flex; flex-direction: column; gap: 0.5rem; max-height: 240px; overflow-y: auto; padding-right: 0.5rem;">
+                  <!-- Se llena con JS -->
+                </div>
+
+                <div class="recipe-summary">
+                  <span>Cuesta prepararla: <strong id="recipeEstimatedCost" style="color: var(--accent-text);">Q 0.00</strong></span>
+                  <span>Ganancia: <strong id="recipeProjectedMargin" style="color: var(--ok-text);">0%</strong></span>
+                </div>
+              </div>
+
+              <!-- Cuando el cliente escoge entre varias (vidrio / lata...) -->
+              <div class="prod-options" id="sectionOptions">
+                <div class="recipe-head">
+                  <h4>🍺 Que el cliente elija (opcional)</h4>
+                  <button type="button" class="btn btn-secondary btn-sm" id="btnAddProdOption">➕ Agregar opción</button>
+                </div>
+                <p class="help-text">Para cuando el cliente escoge entre varias, por ejemplo “Gallo de vidrio” o “Gallo de lata”. Cuestan lo mismo. Al vender te pregunta cuál, y baja del inventario la que él elija. Si es un producto que “se vende tal cual”, la opción reemplaza al de arriba.</p>
+                <div id="prodOptionsList" class="prod-options-list">
+                  <!-- Se llena con JS -->
+                </div>
+              </div>
+            </div>
+          </details>
+
+          <div class="prod-save-bar">
+            <button type="submit" class="btn btn-primary btn-block btn-lg">💾 Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cuadro: Persona -->
+  <div class="modal-overlay" id="modalUser" role="dialog" aria-modal="true" aria-labelledby="userModalTitle">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="userModalTitle">Agregar una persona</h3>
+        <button class="modal-close" onclick="app.closeModal('modalUser')" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="userForm">
+          <input type="hidden" id="userEditId">
+
+          <div class="form-group">
+            <label class="form-label" for="userFullNameInput">Nombre completo</label>
+            <input type="text" id="userFullNameInput" class="form-control" placeholder="Ej: Carlos Gómez" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="userUsernameInput">Usuario (con el que va a entrar)</label>
+            <input type="text" id="userUsernameInput" class="form-control" placeholder="Ej: carlos" autocapitalize="none" autocorrect="off" spellcheck="false" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="userPasswordInput">Contraseña</label>
+            <input type="password" id="userPasswordInput" class="form-control" placeholder="Mínimo 4 letras o números" autocomplete="new-password">
+            <small class="form-hint" id="userPasswordHint">Escríbela y anótala en un lugar seguro para dársela a la persona.</small>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="userRoleInput">¿Qué puede hacer?</label>
+            <select id="userRoleInput" class="form-control" required>
+              <option value="vendedor">🍹 Vendedor: solo vende y cobra</option>
+              <option value="admin">👑 Administrador: puede ver y cambiar todo</option>
+            </select>
+          </div>
+
+          <fieldset class="form-group branch-checks" id="userBranchesGroup">
+            <legend class="form-label">¿En qué sucursales trabaja?</legend>
+            <div id="userBranchChecks" class="check-list"><!-- Se llena con JS --></div>
+            <small class="form-hint">Solo verá y usará las sucursales que marques.</small>
+          </fieldset>
+
+          <button type="submit" class="btn btn-primary btn-block btn-lg">💾 Guardar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cuadro: cambiar las sucursales de una persona -->
+  <div class="modal-overlay" id="modalUserBranches" role="dialog" aria-modal="true" aria-labelledby="userBranchesTitle">
+    <div class="modal-content modal-narrow">
+      <div class="modal-header">
+        <h3 class="modal-title" id="userBranchesTitle">Sucursales de la persona</h3>
+        <button class="modal-close" onclick="app.closeModal('modalUserBranches')" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="userBranchesForm">
+          <input type="hidden" id="userBranchesId">
+          <p class="help-text" id="userBranchesWho" style="margin-bottom: 0.75rem;"></p>
+          <div id="userBranchesChecks" class="check-list"><!-- Se llena con JS --></div>
+          <small class="form-hint">Solo verá y usará las sucursales que marques. Si ya tiene la caja abierta en una que quitas, ciérrala antes.</small>
+          <button type="submit" class="btn btn-primary btn-block btn-lg" style="margin-top: 1rem;">💾 Guardar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cuadro: agregar o cambiar el nombre de una sucursal -->
+  <div class="modal-overlay" id="modalBranch" role="dialog" aria-modal="true" aria-labelledby="branchModalTitle">
+    <div class="modal-content modal-narrow">
+      <div class="modal-header">
+        <h3 class="modal-title" id="branchModalTitle">Agregar una sucursal</h3>
+        <button class="modal-close" onclick="app.closeModal('modalBranch')" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="branchForm">
+          <input type="hidden" id="branchEditId">
+          <div class="form-group">
+            <label class="form-label" for="branchNameInput">Nombre de la sucursal</label>
+            <input type="text" id="branchNameInput" class="form-control" placeholder="Ej: VIP entre amigos" maxlength="60" required>
+            <small class="form-hint" id="branchNameHint">Empieza con todo en cero: sin existencias, sin mesas y sin personal. Después agrega sus mesas, registra su mercadería y asígnale vendedores.</small>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block btn-lg">💾 Guardar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= CUADROS DE MESAS ================= -->
+
+  <!-- Cuadro: Abrir cuenta en una mesa -->
+  <div class="modal-overlay" id="modalOpenTable" role="dialog" aria-modal="true" aria-labelledby="modalOpenTableTitle">
+    <div class="modal-content modal-narrow">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalOpenTableTitle">
+          <span aria-hidden="true">🪑</span> Abrir cuenta
+        </h3>
+        <button class="modal-close" onclick="app.closeModal('modalOpenTable')" aria-label="Cerrar">&times;</button>
+      </div>
+      <form id="formOpenTable">
+        <input type="hidden" id="openTableId">
+        <div class="modal-body">
+          <div class="hint-box">
+            💡 Se abre una cuenta en esta mesa. Después puedes agregar bebidas las veces que quieras y cobrar todo junto al final.
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="openTableCustomer">👤 Nombre del cliente o del grupo (opcional)</label>
+            <input type="text" id="openTableCustomer" class="form-control" placeholder="Ej: Juan Pérez, cumpleaños, grupo de 4">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="openTableNotes">📝 Nota (opcional)</label>
+            <input type="text" id="openTableNotes" class="form-control" placeholder="Ej: pagan por separado">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="app.closeModal('modalOpenTable')">Cancelar</button>
+          <button type="submit" class="btn btn-primary btn-lg" id="btnConfirmOpenTable" style="flex: 1;">
+            🍹 ABRIR CUENTA Y TOMAR PEDIDO
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Cuadro: Cuenta de una mesa -->
+  <div class="modal-overlay" id="modalTableDetail" role="dialog" aria-modal="true" aria-labelledby="tableDetailTitle">
+    <div class="modal-content modal-lg" style="max-width: 700px;">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title" id="tableDetailTitle">🪑 Cuenta de la mesa</h3>
+          <span id="tableDetailSubtitle" style="font-size: 1rem; color: var(--accent-amber); font-weight: 600; display: block; margin-top: 2px;"></span>
+        </div>
+        <button class="modal-close" onclick="app.closeModal('modalTableDetail')" aria-label="Cerrar">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="mesa-chips">
+          <div class="badge-role badge-admin" id="tableDetailWaiter">Atiende: -</div>
+          <div class="badge-role" style="background: var(--bg-surface-hover); color: var(--text-primary);" id="tableDetailElapsed">⏱️ 0 min</div>
+          <div class="badge-role" style="background: rgba(59,130,246,0.18); color: var(--info-text); font-weight: 700;" id="tableDetailStatus">Con cuenta</div>
+        </div>
+
+        <div class="comanda-head">
+          <span>Lo que han pedido</span>
+          <span>Precio</span>
+        </div>
+
+        <div class="table-comanda-list" id="tableComandaList">
+          <!-- Se llena con JS -->
+        </div>
+
+        <div class="mesa-resumen-total">
+          <span class="label">TOTAL DE LA CUENTA:</span>
+          <span class="amount" id="tableDetailTotal">Q 0.00</span>
+        </div>
+      </div>
+
+      <div class="modal-footer modal-footer-split">
+        <div>
+          <button type="button" class="btn btn-secondary" id="btnTransferTableOpenModal" title="Pasar esta cuenta a otra mesa">
+            ⇄ Cambiar de mesa
+          </button>
+          <button type="button" class="btn btn-danger" id="btnCancelTableOrder" title="Borrar esta cuenta sin cobrarla">
+            🗑️ Cancelar cuenta
+          </button>
+        </div>
+        <div>
+          <button type="button" class="btn btn-secondary" id="btnPrintPreBillModal" title="Muestra o imprime la cuenta para el cliente, sin cobrar todavía">
+            🧾 Ver cuenta
+          </button>
+          <button type="button" class="btn btn-primary" id="btnAddRoundsToTable">
+            ➕ Agregar bebidas
+          </button>
+          <button type="button" class="btn btn-success btn-lg" id="btnCheckoutTableDirect">
+            💰 COBRAR CUENTA
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cuadro: Cambiar de mesa -->
+  <div class="modal-overlay" id="modalTransferTable" role="dialog" aria-modal="true" aria-labelledby="transferTitle">
+    <div class="modal-content modal-narrow">
+      <div class="modal-header">
+        <h3 class="modal-title" id="transferTitle">⇄ Cambiar de mesa</h3>
+        <button class="modal-close" onclick="app.closeModal('modalTransferTable')" aria-label="Cerrar">&times;</button>
+      </div>
+      <form id="formTransferTable">
+        <input type="hidden" id="transferFromTableId">
+        <div class="modal-body">
+          <p id="transferFromTableLabel" class="confirm-message" style="margin-bottom: 1.25rem;"></p>
+          <div class="form-group">
+            <label class="form-label" for="transferToTableSelect">¿A qué mesa la pasamos? (solo salen las libres)</label>
+            <select id="transferToTableSelect" class="form-control" required>
+              <!-- Se llena con JS -->
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="app.closeModal('modalTransferTable')">Cancelar</button>
+          <button type="submit" class="btn btn-primary btn-lg" style="flex: 1;">✅ Pasar a esa mesa</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Cuadro: Cuenta para el cliente (todavía sin cobrar) -->
+  <div class="modal-overlay" id="modalPreBill" role="dialog" aria-modal="true" aria-labelledby="preBillModalTitle">
+    <div class="modal-content" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="preBillModalTitle">🧾 Cuenta para el cliente</h3>
+        <button class="modal-close" onclick="app.closeModal('modalPreBill')" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="prebill" id="preBillPrintArea">
+          <div class="pb-center">
+            <h2 id="preBillBizName">MICHELADAS EL MISMÍSIMO</h2>
+            <p id="preBillBizTagline">Refresquería & Bar</p>
+            <p id="preBillBizContact"></p>
+            <p id="preBillBranch" style="display: none; font-weight: 700;"></p>
+            <div class="pb-line"></div>
+            <strong class="pb-title">CUENTA DE CONSUMO</strong>
+            <span class="pb-small">(Todavía no está pagada)</span>
+            <div class="pb-line"></div>
+          </div>
+
+          <div class="pb-row"><span>MESA:</span><strong id="preBillTableName">Mesa 1</strong></div>
+          <div class="pb-row"><span>CLIENTE:</span><span id="preBillCustomer">-</span></div>
+          <div class="pb-row"><span>ATENDIÓ:</span><span id="preBillWaiter">-</span></div>
+          <div class="pb-row"><span>FECHA:</span><span id="preBillDate">-</span></div>
+          <div class="pb-line"></div>
+
+          <table class="pb-table">
+            <thead>
+              <tr>
+                <th>Cant</th>
+                <th>Descripción</th>
+                <th style="text-align: right;">Total</th>
+              </tr>
+            </thead>
+            <tbody id="preBillItemsList">
+              <!-- Se llena con JS -->
+            </tbody>
+          </table>
+
+          <div class="pb-line"></div>
+          <div class="pb-row pb-total">
+            <span>TOTAL A PAGAR:</span>
+            <span id="preBillTotal">Q 0.00</span>
+          </div>
+          <div class="pb-line"></div>
+
+          <div class="pb-center pb-small">
+            <p>¡Muchas gracias por su visita!</p>
+          </div>
+        </div>
+        <button type="button" class="print-prefs-link" onclick="app.openPrinterModal()">⚙️ Impresora: <strong data-print-label>con vista previa</strong> · cambiar</button>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="app.closeModal('modalPreBill')">Cerrar</button>
+        <button type="button" class="btn btn-primary btn-lg" style="flex: 1;" id="btnPrintPreBillAction">
+          🖨️ IMPRIMIR CUENTA
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cuadro: Impresora de este equipo (cómo se imprime en este aparato) -->
+  <div class="modal-overlay" id="modalPrinter" role="dialog" aria-modal="true" aria-labelledby="printerModalTitle">
+    <div class="modal-content" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="printerModalTitle">🖨️ Impresora de este equipo</h3>
+        <button class="modal-close" onclick="app.closeModal('modalPrinter')" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="help-text">Esto se guarda solo en este aparato (tablet, celular o compu). Cada uno puede imprimir a su manera.</p>
+        <div class="print-mode-list" role="radiogroup" aria-label="Cómo imprimir">
+          <label class="print-mode">
+            <input type="radio" name="printMode" value="directo">
+            <span><strong>Directa (con RawBT)</strong><small>Tocas “Imprimir” y el ticket sale de una vez, sin cuadros ni vista previa. Solo en Android.</small></span>
+          </label>
+          <label class="print-mode">
+            <input type="radio" name="printMode" value="dialogo">
+            <span><strong>Con vista previa</strong><small>Se abre el cuadro de imprimir del sistema, como hasta ahora.</small></span>
+          </label>
+        </div>
+        <p class="help-text print-warn" id="printNotAndroid" style="display: none;">Este aparato no es Android, así que aquí solo sirve “Con vista previa”.</p>
+
+        <div id="printDirectOptions" style="display: none;">
+          <label class="check-row" for="printLogo">
+            <input type="checkbox" id="printLogo" checked>
+            <span>Imprimir el logo <small>(si sale raro, desmárcalo)</small></span>
+          </label>
+          <label class="check-row" for="printTildes">
+            <input type="checkbox" id="printTildes">
+            <span>Imprimir tildes y ñ <small>(si salen símbolos raros, desmárcalo)</small></span>
+          </label>
+          <button type="button" class="btn btn-secondary btn-block" id="btnPrintTest">🧪 Imprimir prueba</button>
+          <details class="print-help">
+            <summary>¿Cómo la preparo? (una sola vez por aparato)</summary>
+            <ol>
+              <li>Instala la app <strong>RawBT</strong> desde Play Store (es gratis).</li>
+              <li>Prende la impresora y, en los ajustes de Bluetooth del aparato, vincúlala (aparece como “BlueTooth Printer…”).</li>
+              <li>Abre RawBT → <strong>Ajustes</strong> → <strong>Agregar impresora</strong> → Bluetooth → elige tu impresora → <strong>Probar</strong>. Si imprime, quedó.</li>
+              <li>En RawBT pon el papel en <strong>58 mm</strong>.</li>
+              <li>Regresa aquí y toca <strong>Imprimir prueba</strong>.</li>
+            </ol>
+            <p class="help-text">Si no sale nada, cambia a “Con vista previa”: sigue funcionando como siempre.</p>
+          </details>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary btn-block" onclick="app.closeModal('modalPrinter')">Listo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cuadro: Agregar mesa -->
+  <div class="modal-overlay" id="modalNewTable" role="dialog" aria-modal="true" aria-labelledby="newTableTitle">
+    <div class="modal-content modal-narrow">
+      <div class="modal-header">
+        <h3 class="modal-title" id="newTableTitle">➕ Agregar una mesa</h3>
+        <button class="modal-close" onclick="app.closeModal('modalNewTable')" aria-label="Cerrar">&times;</button>
+      </div>
+      <form id="formNewTable">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label" for="newTableName">Nombre o número de la mesa</label>
+            <input type="text" id="newTableName" class="form-control" placeholder="Ej: Mesa 15, Barra 6" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="newTableArea">¿En qué zona está?</label>
+            <select id="newTableArea" class="form-control" required>
+              <option value="Salón Principal">Salón Principal</option>
+              <option value="Barra">Barra</option>
+              <option value="Terraza">Terraza</option>
+              <option value="VIP / Reservados">VIP / Reservados</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="app.closeModal('modalNewTable')">Cancelar</button>
+          <button type="submit" class="btn btn-primary btn-lg" style="flex: 1;">✅ Crear mesa</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Cuadro: Ventas de mi caja (revisar y anular una por error) -->
+  <div class="modal-overlay" id="modalMySales" role="dialog" aria-modal="true" aria-labelledby="mySalesTitle">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="mySalesTitle">🧾 Ventas de mi caja</h3>
+        <button class="modal-close" onclick="app.closeModal('modalMySales')" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="help-text" style="margin-bottom: 0.75rem;">Aquí están las ventas de tu caja abierta. Si una se cobró por error, tócala y anúlala.</p>
+        <div id="mySalesList" class="my-sales-list">
+          <!-- Se llena con JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detalle de un corte de caja (solo administrador) -->
+  <div class="modal-overlay" id="modalShiftDetail" role="dialog" aria-modal="true" aria-labelledby="shiftDetailTitle">
+    <div class="modal-content corte-modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="shiftDetailTitle">💰 Detalle del corte</h3>
+        <button class="modal-close" onclick="app.closeModal('modalShiftDetail')" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="modal-body" id="shiftDetailBody">
+        <!-- Se llena con JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Cuadro: Poner precios a los productos que todavía están en Q0 (pausados) -->
+  <div class="modal-overlay" id="modalPrices" role="dialog" aria-modal="true" aria-labelledby="pricesTitle">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="pricesTitle">💲 Poner precios</h3>
+        <button class="modal-close" onclick="app.closeModal('modalPrices')" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="prices-intro">Estos productos todavía no tienen precio, por eso están <strong>pausados</strong> y no salen en “Vender”. Escribe el precio de los que quieras vender: <strong>se activan solos</strong> al guardar. Los que dejes en blanco siguen pausados.</p>
+        <div class="prices-list" id="pricesList"></div>
+      </div>
+      <div class="modal-footer confirm-footer">
+        <button type="button" class="btn btn-secondary btn-lg" onclick="app.closeModal('modalPrices')">Cerrar</button>
+        <button type="button" class="btn btn-primary btn-lg" id="btnPricesSave" disabled>Guardar precios</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cuadro: Anular una venta (pide el motivo) -->
+  <div class="modal-overlay" id="modalVoid" role="alertdialog" aria-modal="true" aria-labelledby="voidTitle">
+    <div class="modal-content modal-narrow">
+      <div class="modal-header">
+        <h3 class="modal-title" id="voidTitle">🚫 Anular venta</h3>
+        <button class="modal-close" onclick="app.closeModal('modalVoid')" aria-label="Cerrar">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="void-summary" id="voidSummary"></div>
+
+        <label class="form-label" for="voidReason">¿Por qué se anula?</label>
+        <div class="void-chips" id="voidChips" role="group" aria-label="Motivos más comunes"></div>
+        <input type="text" id="voidReason" class="form-control" maxlength="200" autocomplete="off" placeholder="Escribe el motivo (obligatorio)">
+
+        <div class="hint-box void-hint">
+          Al anular: <strong>el inventario se devuelve</strong>, la venta deja de contar en el corte de caja y en los reportes, y queda guardada con tu nombre y el motivo. No se puede deshacer.
+        </div>
+      </div>
+      <div class="modal-footer confirm-footer">
+        <button type="button" class="btn btn-secondary btn-lg" id="btnVoidNo">No, volver</button>
+        <button type="button" class="btn btn-danger btn-lg" id="btnVoidYes" disabled>Sí, anular venta</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cuadro de pregunta: "¿Seguro?" (reemplaza los cuadros feos del navegador) -->
+  <div class="modal-overlay" id="modalConfirm" role="alertdialog" aria-modal="true" aria-labelledby="confirmTitle" aria-describedby="confirmMessage">
+    <div class="modal-content modal-narrow">
+      <div class="modal-header">
+        <h3 class="modal-title" id="confirmTitle">¿Estás seguro?</h3>
+      </div>
+      <div class="modal-body">
+        <p class="confirm-message" id="confirmMessage"></p>
+        <div id="confirmTypeWrap" style="display: none; margin-top: 1rem;">
+          <label class="form-label" for="confirmTypeInput" id="confirmTypeLabel"></label>
+          <input type="text" id="confirmTypeInput" class="form-control" autocomplete="off" autocapitalize="characters">
+        </div>
+      </div>
+      <div class="modal-footer confirm-footer">
+        <button type="button" class="btn btn-secondary btn-lg" id="btnConfirmNo">No, volver</button>
+        <button type="button" class="btn btn-primary btn-lg" id="btnConfirmYes">Sí</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Avisos (aparecen arriba, en el centro) -->
+  <div class="toast-container" id="toastContainer" role="status" aria-live="polite"></div>
+
+  <!-- Lógica de la aplicación -->
+  <script type="module" src="/js/app.js"></script>
+  <script>
+    /* Guarda los archivos del sistema en el aparato (ver sw.js). Se registra ya con todo cargado, sin estorbar la apertura. */
+    if ('serviceWorker' in navigator && (location.protocol === 'https:' || /[?&]sw=1\b/.test(location.search))) {   /* en tu sitio (https) siempre; en la compu local solo con ?sw=1 */
+      window.addEventListener('load', function () {
+        setTimeout(function () { try { navigator.serviceWorker.register('/sw.js').catch(function () {}); } catch (e) {} }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>

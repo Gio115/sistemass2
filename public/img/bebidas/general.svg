@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2e3b52"/><stop offset="1" stop-color="#1b2433"/></linearGradient>
+    <linearGradient id="liq" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbbf24"/><stop offset="1" stop-color="#f59e0b"/></linearGradient>
+    <clipPath id="copa"><path d="M24 22h48c0 20-9 32-24 33C33 54 24 42 24 22z"/></clipPath>
+  </defs>
+  <rect width="96" height="96" rx="0" fill="url(#bg)"/>
+  <path d="M24 22h48c0 20-9 32-24 33C33 54 24 42 24 22z" fill="#fff" fill-opacity=".12"/>
+  <g clip-path="url(#copa)"><rect x="20" y="34" width="56" height="30" fill="url(#liq)"/><path d="M33 30c0 10 3 17 8 21" stroke="#fff" stroke-opacity=".45" stroke-width="3" stroke-linecap="round" fill="none"/></g>
+  <path d="M24 22h48c0 20-9 32-24 33C33 54 24 42 24 22z" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.8" stroke-linejoin="round"/>
+  <path d="M48 55v22M35 79h26" stroke="#e5e7eb" stroke-opacity=".8" stroke-width="4" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,19 @@
+{
+  "name": "sistema-el-mismisimo",
+  "version": "1.0.0",
+  "description": "Sistema de punto de venta e inventario para Micheladas El Mismísimo",
+  "type": "module",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch-path=src src/server.js",
+    "build": "echo \"Sin compilacion: nada que construir\""
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.3.0",
+    "jpeg-js": "^0.4.4"
+  }
+}

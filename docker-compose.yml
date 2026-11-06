@@ -1,0 +1,33 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    init: true
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATA_DIR: /app/data
+    ports:
+      - "${PORT_PUBLICO:-3000}:3000"
+    volumes:
+      - mismisimo_data:/app/data
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3000/api/health').then(r=>r.json()).then(h=>process.exit(h.status==='ok'&&h.base_datos==='ok'?0:1)).catch(()=>process.exit(1))"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  mismisimo_data:
+    name: mismisimo_pos_data

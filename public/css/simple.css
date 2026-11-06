@@ -1,0 +1,1764 @@
+/* Letra Outfit guardada en el propio sistema (licencia OFL, ver fonts/OFL-Outfit.txt) */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url(/fonts/outfit-latin-ext-wght-normal.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url(/fonts/outfit-latin-wght-normal.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ===================================================
+   MODO SIMPLE – legibilidad y facilidad de uso
+   Se carga DESPUÉS de main.css y lo sobrescribe.
+   Objetivo: que lo use sin esfuerzo una persona mayor o un niño:
+   letra grande, mucho contraste, botones grandes con texto,
+   avisos que no tapan nada y nada escondido.
+   =================================================== */
+
+/* ---------- 1. Tamaño de letra (el usuario lo cambia con el botón "Letra") ---------- */
+html { font-size: 112.5%; }                         /* 18 px: letra normal */
+html[data-text-size="grande"] { font-size: 125%; }  /* 20 px */
+html[data-text-size="muy-grande"] { font-size: 140%; } /* 22.4 px */
+
+body { line-height: 1.5; }
+
+/* ---------- 2. Contraste: textos secundarios mucho más legibles ---------- */
+:root {
+  --text-secondary: #d6deeb;
+  --text-muted: #b0bccd;
+  --border-color: rgba(255, 255, 255, 0.18);
+  --focus-ring: #fbbf24;
+}
+
+/* Nada de textos en MAYÚSCULAS sueltas: cuestan más de leer */
+.badge-role, .data-table th, .tablet-floating-subtitle, .pos-table-sub,
+.kpi-chip-label, .table-status-pill, .table-total-label {
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+}
+
+/* ---------- 3. Foco visible (para teclado y lectores) ---------- */
+:focus-visible {
+  outline: 3px solid var(--focus-ring) !important;
+  outline-offset: 2px;
+}
+.form-control:focus { outline: none !important; border-color: var(--accent-gold); box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.35); }
+
+/* ---------- 4. Botones grandes, con texto claro ---------- */
+.btn {
+  min-height: 3rem;
+  padding: 0.65rem 1.25rem;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.2;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-sm { min-height: 2.75rem; padding: 0.5rem 0.95rem; font-size: 0.95rem; }
+.btn-xs { min-height: 2.6rem; padding: 0.4rem 0.8rem; font-size: 0.95rem; }
+.btn-lg { min-height: 3.5rem; font-size: 1.1rem; }
+.btn-xl { min-height: 4rem; font-size: 1.25rem; font-weight: 800; }
+.btn-secondary { border: 2px solid rgba(255, 255, 255, 0.25); }
+.btn:active:not(:disabled) { transform: scale(0.98); }
+.btn:disabled, .btn-checkout:disabled, .tablet-floating-btn-pay:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(0.5);
+}
+
+/* ---------- 5. Formularios ---------- */
+.form-group { margin-bottom: 1.1rem; }
+.form-label { font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.45rem; }
+.form-control {
+  min-height: 3.1rem;
+  font-size: 1.05rem;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+}
+textarea.form-control { min-height: 5rem; }
+.form-hint { display: block; font-size: 0.95rem; color: var(--text-secondary); margin-top: 0.35rem; }
+.form-row-2, .form-row-3 { display: grid; gap: 0.75rem; }
+.form-row-2 { grid-template-columns: 1fr 1fr; }
+.form-row-3 { grid-template-columns: 1fr 1fr 1fr; }
+@media (max-width: 560px) {
+  .form-row-2, .form-row-3 { grid-template-columns: 1fr; }
+}
+
+/* Utilidades de texto */
+.help-text { color: var(--text-secondary); font-size: 1rem; }
+.page-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem; }
+.page-head h2 { font-size: 1.5rem; margin-bottom: 0.2rem; }
+.page-head p { color: var(--text-secondary); font-size: 1rem; }
+.page-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+
+/* ---------- 6. Cabecera: nunca recorta, se acomoda en 2 filas si hace falta ---------- */
+.app-header {
+  height: auto !important;
+  min-height: 3.6rem !important;
+  max-height: none !important;
+  padding: 0.45rem 0.75rem !important;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  overflow: visible !important;
+}
+.header-brand { max-width: none !important; flex: 0 1 auto; }
+.header-actions { flex-wrap: wrap; justify-content: flex-end; gap: 0.45rem; }
+.header-logo { height: 2.4rem; }
+.brand-info h1 { font-size: 1.15rem; }
+.brand-info span { font-size: 0.9rem; }
+.badge-role { font-size: 0.9rem; padding: 0.3rem 0.8rem; }
+.user-avatar { width: 2.3rem; height: 2.3rem; font-size: 1rem; }
+.user-fullname-desktop { font-size: 1rem !important; }
+.logout-text-desktop { display: inline !important; }
+#btnShiftStatus { font-weight: 800; }
+#btnShiftStatus.caja-cerrada { border-color: #f87171; background: rgba(239, 68, 68, 0.18); }
+#btnShiftStatus.caja-abierta { border-color: #34d399; background: rgba(16, 185, 129, 0.16); }
+.text-size-icon { font-weight: 900; font-size: 1.1rem; }
+
+@media (max-width: 700px) {
+  .brand-info span, .user-fullname-desktop { display: none !important; }
+  .header-actions .btn-label-optional { display: none; }
+}
+
+/* ---------- 7. Pestañas: todas visibles, grandes, sin esconderse ---------- */
+.nav-tabs {
+  height: auto !important;
+  min-height: 3.2rem !important;
+  padding: 0.4rem 0.6rem !important;
+}
+.nav-tabs-left { overflow-x: visible !important; flex-wrap: wrap; }
+.nav-tab-buttons { flex-wrap: wrap !important; gap: 0.4rem !important; }
+.nav-tab-btn {
+  min-height: 2.9rem;
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  padding: 0.45rem 1rem !important;
+  border-radius: 0.7rem;
+}
+.nav-tab-btn.active { box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.45); }
+.btn-discrete-action, .btn-discrete-shift { min-height: 2.6rem; font-size: 0.95rem; }
+
+/* ---------- 8. Avisos (toasts): arriba al centro, sobre los cuadros, sin tapar el cobro ---------- */
+.toast-container {
+  top: 5rem;
+  bottom: auto !important;
+  right: auto !important;
+  left: 50%;
+  transform: translateX(-50%);
+  align-items: center;
+  z-index: 3000 !important;
+  width: min(94vw, 36rem);
+  pointer-events: none;
+}
+.toast {
+  width: 100%;
+  font-size: 1.05rem;
+  font-weight: 600;
+  padding: 0.95rem 1.2rem;
+  pointer-events: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+.toast.success { background: #0f3d2e; border: 2px solid #34d399; }
+.toast.error { background: #4a1518; border: 2px solid #f87171; }
+.toast.warning, .toast.info { background: #3a2f0b; border: 2px solid #fbbf24; }
+
+/* ---------- 9. Cuadros (modales) ---------- */
+.modal-content { max-height: 94vh; }
+.modal-narrow { max-width: 480px !important; }
+.modal-title { font-size: 1.35rem; font-weight: 800; }
+.modal-close {
+  width: 3rem; height: 3rem;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2rem;
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 0.7rem;
+  flex-shrink: 0;
+}
+.modal-close:hover { background: rgba(255, 255, 255, 0.18); }
+.modal-footer { gap: 0.75rem; }
+.modal-footer .btn { min-height: 3.25rem; }
+.modal-footer-split { justify-content: space-between !important; flex-wrap: wrap; }
+.modal-footer-split > div { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+.hint-box {
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(52, 211, 153, 0.45);
+  border-radius: 0.7rem;
+  padding: 0.8rem 1rem;
+  margin-bottom: 1.1rem;
+  color: var(--ok-text);
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+/* Cuadro de confirmación (reemplaza los cuadros pequeños del navegador) */
+#modalConfirm { z-index: 1200 !important; }
+.confirm-message { font-size: 1.2rem; line-height: 1.5; color: var(--text-primary); }
+.confirm-message strong { color: var(--accent-amber); }
+.confirm-footer .btn { flex: 1; }
+#modalConfirm.es-peligro .modal-content { border-color: #f87171; }
+#modalConfirm.es-peligro .modal-title { color: var(--bad-text); }
+
+/* Cuadro de ayuda */
+.help-steps { list-style: none; padding: 0; margin: 0; counter-reset: paso; }
+.help-steps li { display: flex; gap: 0.9rem; align-items: flex-start; margin-bottom: 1.1rem; font-size: 1.05rem; line-height: 1.45; }
+.help-steps li::before {
+  counter-increment: paso;
+  content: counter(paso);
+  flex-shrink: 0;
+  width: 2.2rem; height: 2.2rem;
+  border-radius: 50%;
+  background: var(--accent-gold);
+  color: #000;
+  font-weight: 900;
+  display: grid; place-items: center;
+}
+.help-steps strong { color: var(--accent-amber); }
+.help-note { background: rgba(255, 255, 255, 0.06); border-radius: 0.7rem; padding: 0.8rem 1rem; margin-top: 0.5rem; font-size: 1rem; }
+.help-list { padding-left: 1.2rem; font-size: 1.05rem; line-height: 1.7; }
+
+/* ---------- 10. Vender (POS) ---------- */
+.shift-banner {
+  display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap;
+  background: rgba(239, 68, 68, 0.16);
+  border: 2px solid #f87171;
+  border-radius: 0.8rem;
+  padding: 0.6rem 0.9rem;
+  margin-bottom: 0.6rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+.pos-products-grid {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 12.5rem), 1fr)) !important;
+  grid-auto-rows: auto !important;
+}
+.product-card { position: relative; min-height: 11rem; }
+.product-name { font-size: 1.1rem; font-weight: 800; line-height: 1.25; }
+.product-desc { font-size: 0.95rem; color: var(--text-secondary); }
+.product-price { font-size: 1.5rem; font-weight: 900; }
+.product-footer { flex-wrap: wrap; gap: 0.4rem; }
+.product-stock-tag { font-size: 0.9rem; color: var(--text-secondary); }
+.product-stock-tag.low { color: var(--bad-text); font-weight: 700; }
+.product-badge { font-size: 0.9rem; }
+.product-add-hint { font-size: 0.95rem; font-weight: 800; color: var(--accent-amber); margin-top: 0.4rem; }
+.product-added {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(16, 185, 129, 0.92);
+  color: #fff; font-size: 1.5rem; font-weight: 900;
+  border-radius: inherit;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.15s;
+}
+.product-card.just-added .product-added { opacity: 1; }
+.btn-cust-trigger { margin-top: 0.5rem; width: 100%; }
+.cat-pill { min-height: 2.9rem; font-size: 1rem !important; font-weight: 700; padding: 0.4rem 1rem !important; }
+.search-box input { min-height: 3rem; font-size: 1.05rem; }
+
+.cart-header h2 { font-size: 1.35rem; }
+.cart-item-title { font-size: 1.05rem; font-weight: 700; }
+.cart-item-customization { font-size: 0.95rem; }
+.cart-item-subtotal { font-size: 1.2rem; font-weight: 800; }
+.btn-qty { width: 3rem !important; height: 3rem !important; font-size: 1.5rem !important; font-weight: 900; }
+.qty-number { font-size: 1.3rem; min-width: 2.2rem; text-align: center; font-weight: 800; }
+.btn-remove-item { min-height: 2.6rem; padding: 0.3rem 0.8rem; font-size: 0.95rem; color: var(--bad-text); border-color: rgba(248, 113, 113, 0.6); }
+.cart-row { font-size: 1.05rem; }
+.total-row { font-size: 1.5rem; font-weight: 900; }
+.cart-discount-input {
+  width: 6.5rem; min-height: 2.6rem;
+  padding: 0.25rem 0.6rem;
+  background: var(--bg-secondary);
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  color: var(--text-primary);
+  border-radius: 0.5rem;
+  text-align: right;
+  font-size: 1.05rem;
+  font-family: inherit;
+}
+.cart-empty p { font-size: 1.2rem; font-weight: 700; }
+.cart-empty span { font-size: 1rem !important; color: var(--text-secondary); }
+.btn-checkout { min-height: 4.2rem; font-size: 1.35rem !important; font-weight: 900 !important; }
+.tablet-floating-btn-pay { min-height: 3.6rem; font-size: 1.15rem !important; font-weight: 900; }
+.tablet-floating-total { font-size: 1.5rem; font-weight: 900; }
+.tablet-floating-subtitle, .tablet-floating-peek { font-size: 0.95rem; color: var(--text-secondary); }
+.table-cart-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.6rem; }
+.table-cart-actions .btn { flex: 1 1 8rem; }
+.btn-save-table { background: rgba(59, 130, 246, 0.22) !important; color: var(--info-text) !important; border: 2px solid rgba(96, 165, 250, 0.6) !important; }
+.pos-table-name { font-size: 1.15rem; }
+
+/* ---------- 11. Cobro: pasos numerados ---------- */
+.pay-total-box { text-align: center; margin-bottom: 1rem; }
+.pay-total-label { font-size: 1.05rem; color: var(--text-secondary); font-weight: 700; }
+.pay-total-amount { font-size: 2.8rem; font-weight: 900; color: var(--accent-amber); line-height: 1.1; }
+.pay-step { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; font-size: 1.1rem; font-weight: 800; margin: 1.1rem 0 0.6rem; }
+.pay-step small { font-size: 0.95rem; font-weight: 500; color: var(--text-secondary); flex-basis: 100%; margin-left: 2.6rem; margin-top: -0.3rem; }
+.pay-step-num {
+  background: var(--accent-gold); color: #000;
+  width: 2rem; height: 2rem; border-radius: 50%;
+  display: grid; place-items: center;
+  font-weight: 900; flex-shrink: 0;
+}
+.payment-methods-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 0.6rem; }
+.pay-method-btn { min-height: 5rem; font-size: 1.05rem; font-weight: 800; position: relative; }
+.pay-method-btn .icon { font-size: 1.8rem; }
+.pay-method-btn.active { outline: 4px solid var(--accent-gold); outline-offset: -2px; }
+.pay-method-btn.active::after { content: "✓"; position: absolute; top: 0.3rem; right: 0.55rem; font-size: 1.2rem; font-weight: 900; color: var(--accent-amber); }
+.btn-tender, .btn-numpad { min-height: 3.5rem; font-size: 1.25rem; font-weight: 800; }
+#payAmountPaid { font-size: 1.8rem; font-weight: 900; text-align: center; color: var(--accent-amber); min-height: 3.6rem; }
+.change-banner {
+  background: rgba(16, 185, 129, 0.15);
+  border: 3px solid #10b981;
+  border-radius: 0.9rem;
+  padding: 1rem 1.1rem;
+  margin-top: 1rem;
+  display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; flex-wrap: wrap;
+}
+.change-banner > span:first-child { font-size: 1.15rem; font-weight: 800; color: #fff; }
+#payChangeAmount { font-size: 2.2rem; font-weight: 900; color: var(--ok-text); }
+
+/* ---------- 12. Mesas ---------- */
+.table-status-pill { font-size: 0.95rem; font-weight: 800; padding: 0.3rem 0.8rem; }
+.table-card-name { font-size: 1.3rem; }
+.table-card-area { font-size: 1rem; }
+.table-btn-action, .table-btn-open-big { min-height: 3.2rem; font-size: 1.05rem !important; font-weight: 800 !important; }
+.table-filter-pill { min-height: 2.8rem; font-size: 1rem !important; font-weight: 700; padding: 0.4rem 1rem !important; }
+.kpi-chip-label { font-size: 0.95rem !important; }
+.kpi-chip-val { font-size: 1.5rem; }
+.item-chip { font-size: 0.95rem !important; }
+.comanda-item-title { font-size: 1.1rem; font-weight: 700; }
+.comanda-item-price { font-size: 1.15rem; font-weight: 800; }
+.btn-remove-comanda-item { min-width: 3rem; min-height: 3rem; font-size: 1.1rem; }
+.mesa-resumen-total { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; padding: 1.1rem 1rem; border-radius: 0.7rem; background: rgba(245, 158, 11, 0.12); border: 2px solid rgba(245, 158, 11, 0.5); margin-top: 1.1rem; }
+.mesa-resumen-total .label { font-weight: 800; font-size: 1.2rem; }
+.mesa-resumen-total .amount { font-weight: 900; font-size: 1.9rem; color: var(--accent-gold); }
+.mesa-chips { display: flex; gap: 0.6rem; margin-bottom: 1.1rem; flex-wrap: wrap; }
+.mesa-chips .badge-role { font-size: 1rem; padding: 0.4rem 0.9rem; }
+
+/* ---------- 13. Tablas de administración ---------- */
+.data-table th { font-size: 0.95rem; padding: 0.8rem 0.75rem; }
+.data-table td { font-size: 1rem; padding: 0.8rem 0.75rem; }
+.badge-status { font-size: 0.95rem; font-weight: 800; padding: 0.3rem 0.7rem; }
+.row-actions { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.btn-danger-soft { color: var(--bad-text); border-color: rgba(248, 113, 113, 0.6); }
+
+/* Panel de resumen */
+.kpi-header { font-size: 1rem; font-weight: 700; color: var(--text-secondary); }
+.kpi-value { font-size: 2rem; }
+.kpi-footer { font-size: 0.95rem; color: var(--text-secondary); }
+.chart-header h3 { font-size: 1.15rem; }
+.mini-kpi { padding: 1rem !important; }
+.mini-kpi span { font-size: 1rem; color: var(--text-secondary); }
+.mini-kpi strong { display: block; font-size: 1.7rem; font-weight: 800; }
+
+/* Configuración */
+.settings-card { max-width: 760px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.5rem; }
+.settings-section { margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color); }
+.settings-section h3 { font-size: 1.15rem; margin-bottom: 0.4rem; color: var(--accent-gold); }
+.danger-zone { margin-top: 2rem; padding: 1.25rem; background: rgba(239, 68, 68, 0.1); border: 2px solid rgba(248, 113, 113, 0.5); border-radius: var(--radius-sm); }
+.danger-zone h3 { font-size: 1.15rem; color: var(--bad-text); margin-bottom: 0.4rem; }
+.danger-zone .btn-row { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1rem; }
+
+/* ---------- 14. Inicio de sesión ---------- */
+.auth-card { max-width: 30rem; padding: 2rem 1.75rem; }
+.auth-title { font-size: 1.7rem; color: var(--accent-amber); }
+.auth-subtitle { font-size: 1.05rem; color: var(--text-secondary); margin-bottom: 1.5rem; }
+.show-password { display: flex; align-items: center; gap: 0.6rem; margin: -0.3rem 0 1.1rem; font-size: 1.05rem; font-weight: 600; cursor: pointer; text-align: left; }
+.show-password input { width: 1.4rem; height: 1.4rem; accent-color: var(--accent-gold); }
+.auth-help { margin-top: 1.25rem; font-size: 1rem; color: var(--text-secondary); }
+#btnLogin { min-height: 3.6rem; font-size: 1.2rem; font-weight: 900; }
+
+/* ---------- 15. Pantallas pequeñas ---------- */
+@media (max-width: 900px) {
+  .main-view { padding-bottom: 6rem !important; }
+}
+
+/* ---------- 16. Cuenta para el cliente (pantalla + impresión) ---------- */
+.prebill {
+  background: #fff;
+  color: #111;
+  font-family: "Courier New", ui-monospace, monospace;
+  font-size: 1rem;
+  padding: 1.25rem;
+  border-radius: 0.6rem;
+  line-height: 1.35;
+}
+.prebill h2 { font-size: 1.3em; margin: 0; color: #000; font-weight: 900; }
+.prebill p { margin: 2px 0; color: #333; font-size: 0.9em; }
+.prebill .pb-center { text-align: center; }
+.prebill .pb-title { display: block; font-size: 1.15em; letter-spacing: 1px; color: #000; }
+.prebill .pb-small { font-size: 0.85em; color: #444; font-weight: 600; }
+.prebill .pb-line { border-top: 2px dashed #000; margin: 10px 0; }
+.prebill .pb-row { display: flex; justify-content: space-between; gap: 0.5rem; margin-bottom: 6px; }
+.prebill .pb-row span:first-child { font-weight: 700; }
+.prebill .pb-table { width: 100%; border-collapse: collapse; font-size: 0.95em; }
+.prebill .pb-table th { text-align: left; border-bottom: 1px solid #999; padding: 4px 0; color: #000; background: none; }
+.prebill .pb-table td { padding: 4px 0; vertical-align: top; color: #111; border: 0; background: none; }
+.prebill .pb-total { font-weight: 900; font-size: 1.4em; color: #000; }
+.prebill .pb-note { display: block; font-size: 0.85em; color: #555; }
+
+#printSheet { display: none; }
+#printSheet.is-ticket { font-family: 'Courier New', Courier, monospace; font-size: 10px; line-height: 1.3; color: #000; background: #fff; }
+@media print {
+  body.printing-sheet #printSheet,
+  body.printing-sheet #printSheet * { visibility: visible !important; }
+  body.printing-sheet #printSheet {
+    display: block;
+    /* papel de 58 mm: se imprimen ~48 mm; la hoja mide 46 mm y va centrada para no quedar cortada en las orillas */
+    position: absolute; left: 0; right: 0; top: 0;
+    width: 46mm; margin: 0 auto; padding: 1mm;
+    border-radius: 0;
+    font-size: 10px;
+  }
+  html, body { background: #fff !important; }
+  /* al imprimir la hoja (ticket o cuenta) todo lo demás desaparece: ni fondos, ni cuadros, ni páginas en blanco */
+  body.printing-sheet > *:not(#printSheet) { display: none !important; }
+  /* el logo es blanco sobre negro: al imprimir se invierte (letras negras sobre papel blanco) para no gastar papel ni calor */
+  #printSheet .ticket-logo { filter: invert(1) grayscale(1) contrast(1.6) !important; }
+  body.printing-sheet .thermal-ticket,
+  body.printing-sheet .thermal-ticket * { visibility: hidden !important; }
+}
+
+/* ---------- 17. Respetar a quien pide menos movimiento ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- 18. Piezas nuevas de pantalla ---------- */
+.login-error {
+  background: rgba(239, 68, 68, 0.18);
+  border: 2px solid #f87171;
+  color: var(--bad-text);
+  border-radius: 0.7rem;
+  padding: 0.8rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  text-align: left;
+}
+
+/* Filtros de la lista de ventas */
+.filter-bar { display: flex; gap: 0.75rem; margin-bottom: 1.1rem; flex-wrap: wrap; align-items: flex-end; }
+.filter-field { display: flex; flex-direction: column; gap: 0.3rem; min-width: 11rem; }
+.filter-field > span { font-size: 0.95rem; font-weight: 700; color: var(--text-secondary); }
+.filter-field-wide { flex: 1 1 16rem; }
+.filter-bar .btn { min-height: 3.1rem; }
+
+/* Formulario para agregar sección */
+.new-category-form {
+  display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: flex-end;
+  background: var(--bg-secondary);
+  padding: 0.9rem; border-radius: 0.7rem;
+  border: 1px solid var(--border-color);
+  margin-bottom: 1.25rem;
+}
+.new-category-form .nc-icon { width: 5rem; }
+.new-category-form .nc-name { flex: 1 1 12rem; }
+.new-category-form .nc-order { width: 6.5rem; }
+.new-category-form .form-label { margin-bottom: 0.3rem; font-size: 0.95rem; }
+
+/* Receta */
+.recipe-head { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin: 1.1rem 0 0.6rem; }
+.recipe-head h4 { font-size: 1.1rem; }
+.recipe-summary {
+  background: var(--bg-secondary); border-radius: 0.6rem; padding: 0.8rem 1rem; margin-top: 0.75rem;
+  display: flex; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; font-size: 1.05rem;
+}
+
+/* Cuenta de la mesa */
+.comanda-head {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.5rem 0; border-bottom: 1px solid var(--border-color); margin-bottom: 0.75rem;
+  font-size: 1rem; font-weight: 800; color: var(--text-secondary);
+}
+
+/* ---------- 19. Piezas de la lógica nueva ---------- */
+.empty-state { text-align: center; padding: 2.5rem 1rem; color: var(--text-secondary); }
+.empty-state .empty-icon { font-size: 3rem; margin-bottom: 0.5rem; }
+.empty-state p { font-size: 1.25rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.3rem; }
+.empty-state span { font-size: 1.05rem; }
+
+.toast { align-items: flex-start; }
+.toast .toast-text { flex: 1; line-height: 1.35; }
+.toast-close {
+  background: rgba(255, 255, 255, 0.12); border: 0; color: inherit; cursor: pointer;
+  width: 2.2rem; height: 2.2rem; border-radius: 0.5rem; font-size: 1rem; flex-shrink: 0;
+}
+.toast-close:hover { background: rgba(255, 255, 255, 0.25); }
+
+.option-card {
+  display: flex; align-items: center; gap: 0.6rem;
+  background: var(--bg-secondary);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  padding: 0.75rem 0.8rem; border-radius: 0.7rem; cursor: pointer;
+  min-height: 3.2rem; font-size: 1rem; font-weight: 600;
+}
+.option-card input { width: 1.4rem; height: 1.4rem; accent-color: var(--accent-gold); flex-shrink: 0; }
+.option-card:has(input:checked) { border-color: var(--accent-gold); background: rgba(245, 158, 11, 0.15); }
+
+.cart-item-saved { opacity: 0.95; border-left: 4px solid #60a5fa; }
+.saved-tag { font-size: 0.9rem; font-weight: 700; color: var(--info-text); white-space: nowrap; }
+
+.big-input { font-size: 1.6rem !important; font-weight: 900; text-align: center; color: var(--accent-amber); min-height: 3.6rem; }
+.shift-summary { background: var(--bg-secondary); border-radius: 0.8rem; padding: 1rem; margin-bottom: 1.1rem; }
+.shift-summary-row { display: flex; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.5rem; font-size: 1.05rem; }
+.shift-summary-total { padding-top: 0.6rem; border-top: 1px dashed var(--border-color); font-size: 1.2rem; font-weight: 800; color: var(--accent-amber); margin-bottom: 0; }
+
+.recipe-ingredient-row {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(5.5rem, 1fr) minmax(3rem, 7.2rem) auto;
+  gap: 0.5rem; align-items: center;
+  background: var(--bg-secondary); padding: 0.5rem; border-radius: 0.6rem;
+}
+@media (max-width: 900px) {
+  .recipe-ingredient-row { grid-template-columns: minmax(4.5rem, 1fr) minmax(5rem, 1.3fr) auto; }
+  .recipe-ingredient-row .recipe-item-select { grid-column: 1 / -1; }
+}
+@media (max-width: 560px) {
+  .recipe-ingredient-row { grid-template-columns: 1fr 1fr; }
+  .recipe-ingredient-row .recipe-item-select { grid-column: 1 / -1; }
+}
+
+.btn-block { width: 100%; }
+.tender-quick-buttons { gap: 0.6rem; }
+.pos-table-badge-right { display: flex; gap: 0.4rem; flex-wrap: wrap; justify-content: flex-end; }
+
+/* ---------- 20. Ajustes de acomodo (tablet y celular) ---------- */
+/* Cabecera: nunca se corta; los botones se acomodan en varias filas si hace falta */
+.header-brand { max-width: none !important; overflow: visible !important; flex: 0 0 auto; }
+.header-actions { flex: 1 1 auto !important; flex-shrink: 1 !important; min-width: 0; justify-content: flex-end; }
+.text-size-icon { transition: font-size 0.15s; }
+html[data-text-size="grande"] .text-size-icon { font-size: 1.3rem; }
+html[data-text-size="muy-grande"] .text-size-icon { font-size: 1.55rem; }
+#btnToggleFullscreen, #btnToggleDiscrete, #btnLogout { white-space: nowrap; }
+
+@media (max-width: 1100px) {
+  .brand-info { display: none !important; }
+  .user-avatar { display: none !important; }
+}
+@media (max-width: 700px) {
+  .user-profile, #btnToggleDiscrete, #btnToggleFullscreen { display: none !important; }
+  .header-actions { justify-content: space-between; }
+  #btnShiftStatus { flex: 1 1 auto; }
+  .app-header { padding: 0.35rem 0.5rem !important; gap: 0.35rem; }
+  .header-logo { height: 2.2rem !important; }
+}
+
+/* Aviso de caja cerrada más compacto en pantallas chicas */
+@media (max-width: 700px) {
+  .shift-banner { padding: 0.5rem 0.65rem; font-size: 0.95rem; gap: 0.5rem; margin-bottom: 0.4rem; }
+  .shift-banner .banner-extra { display: none; }
+  .shift-banner .btn { min-height: 2.6rem; padding: 0.35rem 0.8rem; }
+}
+
+/* Pedido: el nombre de la mesa o cliente se ve completo */
+.pos-table-badge { flex-wrap: wrap; }
+.pos-table-info { min-width: 0; }
+.pos-table-name { white-space: normal !important; overflow: visible !important; text-overflow: clip !important; font-size: 1.05rem; }
+.pos-table-sub { font-size: 0.9rem; }
+
+/* Las pistas "Toca para agregar" solo salen mientras el pedido está vacío */
+.product-add-hint { display: none; }
+.show-hints .product-add-hint { display: block; }
+.product-card { min-height: 9rem; }
+
+/* Botón de cerrar el pedido (celular/tablet vertical) */
+.btn-close-cart-drawer {
+  width: auto !important; height: auto !important;
+  min-height: 2.75rem;
+  border-radius: 0.7rem !important;
+  padding: 0.4rem 0.9rem !important;
+  font-size: 1rem !important;
+}
+
+/* Barra de abajo con el total y el botón de cobrar (celular y tablet vertical) */
+@media (max-width: 900px) {
+  .tablet-floating-cart-bar {
+    height: auto !important;
+    min-height: 4.6rem;
+    padding: 0.5rem 0.75rem !important;
+    gap: 0.6rem !important;
+  }
+  .tablet-floating-info {
+    display: grid !important;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+    column-gap: 0.7rem !important;
+    align-items: center !important;
+    min-width: 0;
+  }
+  .cart-badge-container { grid-row: 1 / span 2; flex-shrink: 0; width: 3rem !important; height: 3rem !important; }
+  .tablet-floating-details { grid-column: 2; grid-row: 1; min-width: 0; }
+  .tablet-floating-subtitle { display: none !important; }
+  .tablet-floating-total { font-size: 1.55rem !important; white-space: nowrap; }
+  .tablet-floating-peek {
+    grid-column: 2; grid-row: 2;
+    margin-left: 0 !important; padding: 0 !important;
+    background: none !important;
+    font-size: 0.95rem !important;
+    color: var(--accent-amber) !important;
+    white-space: nowrap;
+  }
+  .tablet-floating-btn-pay {
+    height: 3.4rem !important; padding: 0 1.1rem !important;
+    font-size: 1.15rem !important; flex-shrink: 0;
+  }
+  .main-view { padding-bottom: 6.2rem !important; }
+  .pos-products-grid { padding-bottom: 6.5rem !important; }
+}
+
+/* ---------- 21. Cabecera en una sola fila ---------- */
+@media (max-width: 1280px) {
+  .user-fullname-desktop { display: none !important; }
+  .btn-label-optional { display: none; }
+}
+@media (max-width: 700px) {
+  .header-brand { display: none !important; }
+  .btn-text-phone-hide { display: none; }
+  .header-actions { flex-wrap: nowrap !important; width: 100%; }
+  .shift-banner { flex-wrap: nowrap; }
+}
+
+
+/* ---------- 22. Ajustes finales de acomodo ---------- */
+/* Las pestañas se acomodan en 2 filas si no caben (nunca quedan cortadas a la derecha) */
+.nav-tabs-left { min-width: 0; }
+.nav-tab-buttons { flex-shrink: 1 !important; min-width: 0; flex-wrap: wrap !important; }
+.nav-tab-buttons { gap: 0.3rem !important; }
+.nav-tab-btn { padding: 0.45rem 0.65rem !important; }
+
+/* "Paga justo" más compacto para que no se vea apretado */
+.btn-tender-exact { font-size: 1rem !important; line-height: 1.1; padding: 0.3rem 0.4rem !important; white-space: normal; }
+
+/* Pantallas medianas: se quita el nombre junto al logo para que el encabezado quepa en una sola fila */
+@media (max-width: 1400px) {
+  .header-brand .brand-info { display: none !important; }
+}
+/* Tableta: el encabezado cabe en una sola fila */
+@media (max-width: 1100px) {
+  .header-brand { display: none !important; }
+  .header-actions { justify-content: flex-end; }
+}
+
+/* El cambio también sale en la franja de abajo del cuadro de cobro (junto al botón COBRAR) en celular,
+   para verlo aunque haya que bajar la pantalla. El aviso grande queda en su lugar, sin taparse con los billetes. */
+.change-banner { background: #0d2b24 !important; }
+.pay-footer-change { display: none; }
+@media (max-width: 699px) {
+  .pay-panel .pay-footer-change {
+    display: block; flex: 1 1 100%;
+    text-align: center; font-size: 1.15rem; font-weight: 900;
+    color: var(--ok-text); background: #0d2b24; border: 2px solid #10b981; border-radius: 0.7rem;
+    padding: 0.3rem 0.6rem;
+  }
+  .pay-panel .pay-footer-change.is-short { color: var(--bad-text); background: rgba(239, 68, 68, 0.2); border-color: #ef4444; }
+  .pay-panel .pay-footer-change:empty { display: none; }
+}
+@media (max-width: 700px) {
+  .nav-tab-btn { padding: 0.4rem 0.5rem !important; font-size: 0.95rem !important; }
+  .nav-tab-buttons { gap: 0.2rem !important; }
+}
+
+/* Teclado de cobro: "Borrar todo" ocupa toda la fila */
+.btn-numpad-clear-all { grid-column: 1 / -1; font-size: 1.05rem !important; min-height: 3rem !important; height: auto !important; }
+
+/* ---------- 23. Letra grande en celular: nada se corta ni se encima ---------- */
+@media (max-width: 700px) {
+  html[data-text-size="grande"] .header-actions,
+  html[data-text-size="muy-grande"] .header-actions { flex-wrap: wrap !important; gap: 0.35rem; }
+  html[data-text-size="grande"] #btnShiftStatus,
+  html[data-text-size="muy-grande"] #btnShiftStatus { flex: 1 1 100%; justify-content: center; white-space: nowrap; }
+  html[data-text-size="grande"] #btnLogout, html[data-text-size="muy-grande"] #btnLogout { flex: 1 1 auto; justify-content: center; }
+  html[data-text-size="grande"] .tablet-floating-cart-bar,
+  html[data-text-size="muy-grande"] .tablet-floating-cart-bar { flex-wrap: wrap; justify-content: stretch; }
+  html[data-text-size="grande"] .tablet-floating-info,
+  html[data-text-size="muy-grande"] .tablet-floating-info { flex: 1 1 100%; }
+  html[data-text-size="grande"] .tablet-floating-btn-pay,
+  html[data-text-size="muy-grande"] .tablet-floating-btn-pay { flex: 1 1 100%; justify-content: center; }
+  html[data-text-size="grande"] .main-view,
+  html[data-text-size="muy-grande"] .main-view { padding-bottom: 10.5rem !important; }
+  html[data-text-size="grande"] .pos-products-grid,
+  html[data-text-size="muy-grande"] .pos-products-grid { padding-bottom: 11rem !important; }
+}
+
+/* Pedido (cuadro que sube desde abajo) con letra grande: se puede bajar con el dedo y nada se corta */
+@media (max-width: 900px) {
+  .cart-header { flex-wrap: wrap; gap: 0.5rem; }
+  .btn-checkout { white-space: nowrap; }
+  html[data-text-size="grande"] .pos-cart-panel,
+  html[data-text-size="muy-grande"] .pos-cart-panel { overflow-y: auto !important; }
+  html[data-text-size="grande"] .cart-items-list,
+  html[data-text-size="muy-grande"] .cart-items-list { flex: 0 0 auto !important; min-height: 7rem; max-height: none !important; overflow: visible !important; }
+  html[data-text-size="grande"] .cart-footer,
+  html[data-text-size="muy-grande"] .cart-footer { flex-shrink: 0; }
+  html[data-text-size="grande"] .btn-checkout,
+  html[data-text-size="muy-grande"] .btn-checkout { font-size: 1.15rem !important; padding-left: 0.5rem !important; padding-right: 0.5rem !important; }
+  html[data-text-size="muy-grande"] .cart-row.total-row { font-size: 1.1rem; }
+}
+
+/* ---------- 24. Rapidez: sin desenfoque de fondo (hacía lento el deslizar en tabletas y celulares sencillos) ---------- */
+/* El desenfoque (blur) se calculaba en cada cuadro, incluso con los cuadros cerrados. Se cambia por un fondo más oscuro. */
+.modal-overlay,
+.cart-drawer-backdrop {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+.modal-overlay { background: rgba(0, 0, 0, 0.82); }
+/* Un cuadro cerrado no se pinta ni se calcula */
+.modal-overlay:not(.active) { visibility: hidden; transition: opacity 0.2s ease-in-out, visibility 0s linear 0.2s; }
+.modal-overlay.active { visibility: visible; transition: opacity 0.2s ease-in-out, visibility 0s linear 0s; }
+
+/* Respuesta inmediata al tocar en celulares y tabletas (sin esperar por si fue doble toque) */
+button, a, label, select, input, .product-card, .table-card, .cat-pill, .nav-tab-btn, .pay-method-btn {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ---------- 25. Tabletas: que se vea bien en cualquier tamaño y en vertical u horizontal ---------- */
+
+/* Tarjetas de bebidas: cada fila crece lo que necesite el texto (antes quedaban cortadas y con letras encimadas) */
+.pos-products-grid { grid-auto-rows: max-content !important; align-content: start; }
+.product-card { min-height: 7.5rem !important; }
+.product-name { overflow-wrap: anywhere; }
+
+/* En pantallas angostas la descripción larga estorba: se deja el nombre, el precio y lo que queda */
+@media (max-width: 900px) {
+  .product-desc { display: none !important; }
+}
+
+/* Barra de pestañas con la barra de arriba oculta: crece lo que necesite y baja a otra fila si no cabe */
+.header-discrete .nav-tabs {
+  height: auto !important;
+  min-height: 3.2rem !important;
+  flex-wrap: wrap;
+  row-gap: 0.35rem;
+  padding: 0.35rem 0.6rem !important;
+}
+.header-discrete .nav-tabs-left { flex: 1 1 auto; }
+.header-discrete .nav-discrete-right { flex-wrap: wrap; margin-left: auto; justify-content: flex-end; }
+@media (max-width: 1400px) {
+  .header-discrete .discrete-brand { display: none !important; }
+}
+@media (max-width: 700px) {
+  .header-discrete .nav-discrete-right { width: 100%; }
+  .header-discrete .btn-discrete-shift { flex: 1 1 auto; justify-content: center; }
+}
+
+/* Tabletas (o celulares acostados) con poca altura: todo más compacto para que quepan más bebidas */
+@media (max-height: 700px) {
+  .app-header { min-height: 3rem !important; padding: 0.3rem 0.6rem !important; gap: 0.35rem; }
+  .app-header .btn, .app-header button { min-height: 2.5rem !important; padding-top: 0.3rem !important; padding-bottom: 0.3rem !important; }
+  .nav-tabs { min-height: 2.9rem !important; padding: 0.25rem 0.5rem !important; }
+  .nav-tab-btn { min-height: 2.5rem; padding-top: 0.3rem !important; padding-bottom: 0.3rem !important; }
+  .btn-discrete-action, .btn-discrete-shift { min-height: 2.5rem; }
+  .shift-banner { padding: 0.4rem 0.7rem; margin-bottom: 0.4rem; }
+  .shift-banner .banner-extra { display: none; }
+  .shift-banner .btn { min-height: 2.5rem; }
+  .search-box input { min-height: 2.6rem; }
+  .cat-pill { min-height: 2.5rem; }
+  .product-desc, .product-add-hint { display: none !important; }
+  .product-card { padding: 0.65rem 0.8rem 0.75rem !important; gap: 0.3rem !important; min-height: 6rem !important; }
+  .product-icon { font-size: 1.7rem !important; }
+  .product-price { font-size: 1.3rem; }
+  .pos-products-grid { gap: 0.55rem !important; }
+}
+/* En horizontal y con poca altura, el buscador y las secciones van en la misma fila */
+@media (max-height: 700px) and (min-width: 700px) {
+  .pos-catalog-panel {
+    display: grid !important;
+    grid-template-columns: minmax(200px, 300px) minmax(0, 1fr);
+    grid-template-rows: auto auto minmax(0, 1fr);
+    column-gap: 0.6rem;
+    row-gap: 0.4rem;
+  }
+  #posShiftBanner { grid-column: 1 / -1; grid-row: 1; }
+  .pos-toolbar { grid-column: 1; grid-row: 2; margin: 0; }
+  .pos-categories { grid-column: 2; grid-row: 2; min-width: 0; margin: 0; }
+  .pos-products-grid { grid-column: 1 / -1; grid-row: 3; min-height: 0; }
+}
+/* Barra de abajo más delgada cuando hay poca altura */
+@media (max-width: 900px) and (max-height: 700px) {
+  .tablet-floating-cart-bar { min-height: 3.7rem; padding: 0.3rem 0.7rem !important; }
+  .cart-badge-container { width: 2.5rem !important; height: 2.5rem !important; }
+  .tablet-floating-total { font-size: 1.3rem !important; }
+  .tablet-floating-peek { font-size: 0.85rem !important; }
+  .tablet-floating-btn-pay { height: 2.8rem !important; font-size: 1.05rem !important; }
+  .main-view { padding-bottom: 4.9rem !important; }
+  .pos-products-grid { padding-bottom: 5rem !important; }
+}
+
+/* Tabletas angostas: la etiqueta del rol (Vendedor / Administrador) sobra, el botón de arriba ya dice quién eres en pantallas grandes */
+@media (max-width: 900px) {
+  #userRoleBadge { display: none !important; }
+}
+/* Barra de abajo en una sola línea cuando hay poca altura: 🛒 total · Ver pedido ▲ · COBRAR */
+@media (max-width: 900px) and (max-height: 700px) {
+  .tablet-floating-info { display: flex !important; align-items: center; gap: 0.75rem; flex: 1 1 auto; }
+  .tablet-floating-details { grid-column: auto; grid-row: auto; }
+  .tablet-floating-peek { grid-column: auto !important; grid-row: auto !important; font-size: 0.95rem !important; }
+  .tablet-floating-cart-bar { min-height: 3.4rem; }
+  .main-view { padding-bottom: 4.5rem !important; }
+  .pos-products-grid { padding-bottom: 4.6rem !important; }
+}
+
+/* ---------- 26. Tableta (y celular acostado) con poca altura: cobro, pedido, mesas y cuentas sin apretujarse ---------- */
+
+/* El cuadro recibe el foco al abrirse (para no abrir el teclado); no necesita el aro amarillo */
+.modal-content:focus, .modal-content:focus-visible { outline: none !important; }
+
+/* En las pestañas que no son "Vender" no hace falta el espacio de la barra de abajo */
+@media (max-width: 900px) {
+  body[data-tab]:not([data-tab="pos"]) .main-view { padding-bottom: 0.5rem !important; }
+}
+
+/* Cuadros emergentes más compactos cuando la pantalla es bajita */
+@media (max-height: 700px) {
+  .modal-overlay { padding: 0.4rem !important; }
+  .modal-content { max-height: calc(100dvh - 0.8rem) !important; }
+  .modal-header { padding: 0.5rem 0.9rem !important; }
+  .modal-title { font-size: 1.2rem; }
+  .modal-close { width: 2.7rem; height: 2.7rem; font-size: 1.8rem; }
+  .modal-body { padding: 0.65rem 0.9rem !important; }
+  .modal-footer { padding: 0.5rem 0.9rem !important; gap: 0.5rem; }
+  .modal-footer .btn { min-height: 2.9rem; padding-top: 0.3rem; padding-bottom: 0.3rem; }
+  .hint-box { padding: 0.5rem 0.8rem; margin-bottom: 0.7rem; font-size: 0.97rem; }
+  .pay-step { margin: 0.7rem 0 0.45rem; }
+  .pay-total-box { margin-bottom: 0.4rem; }
+  .pay-total-amount { font-size: 2.3rem; }
+}
+
+/* Cuenta de una mesa: botones en menos filas para que la lista de bebidas tenga lugar */
+@media (max-height: 700px) {
+  #modalTableDetail .modal-footer-split { gap: 0.4rem 0.5rem; }
+  #modalTableDetail .modal-footer .btn { font-size: 0.95rem; padding-left: 0.6rem; padding-right: 0.6rem; }
+  #modalTableDetail .modal-footer-split > div { gap: 0.4rem; }
+  #modalTableDetail .modal-title { font-size: 1.1rem; }
+  #modalTableDetail .mesa-chips { margin-bottom: 0.5rem; }
+  #modalTableDetail .table-comanda-list { min-height: 5.5rem; }
+}
+@media (min-width: 700px) and (max-height: 700px) {
+  #modalTableDetail .modal-content { max-width: 840px !important; width: 98% !important; }
+  #modalTableDetail .modal-footer-split { flex-wrap: nowrap; }
+  #modalTableDetail .modal-footer-split > div { flex-wrap: nowrap; }
+}
+
+/* ---------- 27. COBRO dentro del panel de la derecha (ya no hay ventana de cobro) ----------
+   Al tocar COBRAR, el panel del pedido cambia a la pantalla de cobro (clase "pay-mode").
+   - Pantalla grande: es el panel fijo de la derecha (una sola columna).
+   - Tableta / celular: es el cajón que sube desde abajo; en tableta ancha se reparte en 3 columnas. */
+.pay-panel { display: none; flex: 1 1 auto; min-height: 0; flex-direction: column; }
+.pos-cart-panel.pay-mode > .pay-panel { display: flex; }
+.pos-cart-panel.pay-mode > .cart-items-list,
+.pos-cart-panel.pay-mode > .cart-footer,
+.pos-cart-panel.pay-mode > .pos-table-badge { display: none !important; }
+.cart-title-pay { display: none; }
+.cart-title-pay small { font-size: 0.85em; font-weight: 700; color: var(--accent-amber); }
+.pos-cart-panel.pay-mode .cart-title-order { display: none; }
+.pos-cart-panel.pay-mode .cart-title-pay { display: inline; }
+.pos-cart-panel.pay-mode #btnClearCart { display: none; }
+
+.pay-panel-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 0.5rem 0.9rem 0.7rem; }
+.pay-panel-footer {
+  flex: 0 0 auto; display: flex; flex-wrap: wrap; gap: 0.5rem;
+  padding: 0.55rem 0.9rem 0.75rem; background: #10141d; border-top: 1px solid var(--border-color);
+}
+.pay-panel-footer .btn { min-height: 3.1rem; }
+
+/* Medidas compactas del cobro en el panel */
+.pay-panel .pay-total-box { margin-bottom: 0.2rem; }
+.pay-panel .pay-total-label { font-size: 0.95rem; }
+.pay-panel .pay-total-amount { font-size: 2.3rem; }
+.pay-panel .pay-step { font-size: 1rem; margin: 0.6rem 0 0.4rem; flex-wrap: nowrap; align-items: center; }
+.pay-panel .pay-step small { display: none; }
+.pay-panel .pay-step-num { width: 1.7rem; height: 1.7rem; }
+.pay-panel .payment-methods-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 0.4rem; margin-bottom: 0.3rem; }
+.pay-panel .pay-method-btn { min-height: 3.6rem; font-size: 0.85rem; padding: 0.3rem 0.15rem; gap: 0.1rem; }
+.pay-panel .pay-method-btn .icon { font-size: 1.35rem; }
+.pay-panel .pay-method-btn.active::after { top: 0.1rem; right: 0.3rem; font-size: 1rem; }
+.pay-panel .tender-quick-buttons { gap: 0.4rem !important; margin: 0 0 0.3rem; }
+.pay-panel .btn-tender { min-height: 2.8rem; height: 2.8rem !important; font-size: 1.05rem !important; }
+.pay-panel .btn-tender-exact { font-size: 0.85rem !important; line-height: 1.05; }
+.pay-panel .change-banner { position: static; margin-top: 0.4rem; padding: 0.4rem 0.8rem; border-width: 2px; }
+.pay-panel .change-banner > span:first-child { font-size: 1rem; }
+.pay-panel #payChangeAmount { font-size: 1.8rem; line-height: 1.15; }
+.pay-panel .form-group { margin-top: 0.5rem !important; margin-bottom: 0; }
+.pay-panel .form-label { font-size: 0.9rem; margin-bottom: 0.2rem; }
+.pay-panel .form-control { min-height: 2.6rem; padding-top: 0.3rem; padding-bottom: 0.3rem; }
+.pay-panel #payAmountPaid { font-size: 1.6rem; min-height: 2.9rem; }
+.pay-panel .tablet-numpad { gap: 0.4rem !important; margin: 0.5rem 0 0.2rem; }
+.pay-panel .btn-numpad { min-height: 2.7rem; height: 2.7rem !important; font-size: 1.3rem !important; }
+.pay-panel .btn-numpad-clear { font-size: 0.8rem !important; line-height: 1.05; text-align: center; padding: 0.1rem !important; }
+.pay-panel .btn-numpad-clear-all { height: auto !important; min-height: 2.6rem !important; font-size: 0.92rem !important; }
+
+/* Pantalla grande (panel fijo de 360 px): el cambio se ve en el recuadro verde de arriba; "Volver" angosto */
+@media (min-width: 901px) {
+  .pay-panel-footer .btn-secondary { flex: 0 0 auto; padding-left: 0.9rem; padding-right: 0.9rem; }
+}
+
+/* Cajón de tableta ancha (700–900 px): tres columnas, todo en una pantalla.
+   Izquierda: total, cómo paga, nota. Centro: billetes, cambio, monto. Derecha: teclado. */
+@media (min-width: 700px) and (max-width: 900px) {
+  .pay-panel .pay-panel-body {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 2.1fr);
+    grid-template-rows: repeat(5, min-content) 1fr;
+    column-gap: 1rem;
+    align-content: start;
+    padding-top: 0.6rem;
+  }
+  .pay-panel .pay-panel-body > :not(#cashTenderSection) { grid-column: 1; margin-top: 0; }
+  .pay-panel .pay-panel-body > #cashTenderSection { grid-column: 2; grid-row: 1 / -1; }
+  /* si paga con tarjeta o transferencia no hay billetes ni teclado: una sola columna */
+  .pay-panel .pay-panel-body:has(#cashTenderSection[style*="none"]) { grid-template-columns: minmax(0, 1fr); }
+  .pay-panel .pay-panel-body:has(#cashTenderSection[style*="none"]) > :not(#cashTenderSection) { grid-column: 1; }
+
+  /* formas de pago: una debajo de la otra, con el ícono al lado */
+  .pay-panel .payment-methods-grid { grid-template-columns: minmax(0, 1fr) !important; }
+  .pay-panel .pay-method-btn { min-height: 2.9rem; flex-direction: row; justify-content: flex-start; gap: 0.6rem; padding: 0.3rem 0.8rem; font-size: 1.05rem; }
+  .pay-panel .pay-method-btn .icon { font-size: 1.35rem; }
+  .pay-panel .pay-method-btn.active::after { top: 50%; right: 0.55rem; transform: translateY(-50%); font-size: 1.2rem; }
+  .pay-panel .pay-panel-body:has(#cashTenderSection[style*="none"]) .payment-methods-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+  .pay-panel .pay-panel-body:has(#cashTenderSection[style*="none"]) .pay-method-btn { flex-direction: column; justify-content: center; min-height: 4rem; }
+  .pay-panel .pay-step { font-size: 0.95rem; }
+  .pay-panel .pay-panel-body > .pay-step:last-child { margin: 0.45rem 0 0; }
+  .pay-panel .pay-panel-body > .form-group .form-label { font-size: 0.85rem; }
+  .pay-panel .pay-panel-body > .form-group .form-control { min-height: 2.5rem; }
+
+  /* efectivo: dos columnas (billetes + cambio + monto | teclado) */
+  .pay-panel #cashTenderSection:not([style*="none"]) {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    grid-template-rows: repeat(4, min-content) 1fr;
+    column-gap: 0.9rem;
+    align-content: start;
+  }
+  .pay-panel #cashTenderSection > .pay-step { grid-column: 1; margin-top: 0; }
+  .pay-panel #cashTenderSection > .tender-quick-buttons { grid-column: 1; }
+  .pay-panel #cashTenderSection > .change-banner { grid-column: 1; flex-direction: column; align-items: flex-start; gap: 0; }
+  .pay-panel #cashTenderSection > .change-banner > span:first-child { font-size: 0.98rem; }
+  .pay-panel #cashTenderSection > .form-group { grid-column: 1; }
+  .pay-panel #cashTenderSection > .tablet-numpad { grid-column: 2; grid-row: 1 / -1; align-self: start; margin: 0; }
+  .pay-panel .btn-tender { min-height: 3rem; height: 3rem !important; font-size: 1.1rem !important; }
+  .pay-panel .btn-numpad { min-height: 3rem; height: 3rem !important; font-size: 1.35rem !important; }
+  .pay-panel #payChangeAmount { font-size: 1.8rem; }
+  .pay-panel #payAmountPaid { font-size: 1.6rem; min-height: 3rem; padding-top: 0.2rem; padding-bottom: 0.2rem; }
+  .pay-panel .pay-panel-footer .btn { min-height: 3rem; }
+}
+/* ...y un poco más compacto si la pantalla es bajita */
+@media (min-width: 700px) and (max-width: 900px) and (max-height: 700px) {
+  .pay-panel .pay-panel-body { padding-top: 0.3rem; padding-bottom: 0.3rem; }
+  .pay-panel .pay-method-btn { min-height: 2.3rem; padding-top: 0.15rem; padding-bottom: 0.15rem; }
+  .pay-panel .payment-methods-grid { gap: 0.3rem; margin-bottom: 0.2rem; }
+  .pay-panel .pay-total-label { font-size: 0.9rem; }
+  .pay-panel .pay-total-box { margin-bottom: 0.2rem; }
+  .pay-panel .pay-total-amount { font-size: 2rem; }
+  .pay-panel .pay-panel-body > .form-group .form-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .pay-panel .pay-panel-body > .form-group { margin-top: 0.2rem !important; }
+  .pay-panel .pay-step { font-size: 0.92rem; margin: 0.4rem 0 0.3rem; }
+  .pay-panel .btn-tender, .pay-panel .btn-numpad { min-height: 2.7rem; height: 2.7rem !important; }
+  .pay-panel #payChangeAmount { font-size: 1.7rem; }
+  .pay-panel #payAmountPaid { font-size: 1.5rem; min-height: 2.8rem; }
+  .pay-panel .pay-panel-footer { padding: 0.4rem 0.9rem 0.45rem; }
+  .pay-panel .pay-panel-footer .btn { min-height: 2.7rem; }
+}
+
+/* PEDIDO en tableta acostada: la lista de bebidas a la izquierda, el total y COBRAR a la derecha */
+@media (min-width: 700px) and (max-width: 900px) and (max-height: 700px) {
+  html:not([data-text-size="muy-grande"]) .pos-cart-panel {
+    height: calc(100dvh - 0.8rem) !important;
+    max-height: calc(100dvh - 0.8rem) !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    grid-template-rows: auto auto auto minmax(0, 1fr);
+    overflow: hidden !important;
+  }
+  html:not([data-text-size="muy-grande"]) .pos-cart-panel > .drawer-drag-handle { grid-column: 1 / -1; grid-row: 1; margin: 6px auto 2px !important; }
+  html:not([data-text-size="muy-grande"]) .pos-cart-panel > .cart-header { grid-column: 1 / -1; grid-row: 2; padding: 0.4rem 0.9rem !important; }
+  html:not([data-text-size="muy-grande"]) .pos-cart-panel > .cart-items-list { grid-column: 1; grid-row: 3 / span 2; min-height: 0; max-height: none !important; overflow-y: auto !important; flex: none !important; }
+  html:not([data-text-size="muy-grande"]) .pos-cart-panel > .pos-table-badge { grid-column: 2; grid-row: 3; margin: 0.5rem 0.9rem 0.3rem 0.4rem !important; }
+  html:not([data-text-size="muy-grande"]) .pos-cart-panel > .cart-footer { grid-column: 2; grid-row: 4; align-self: start; padding: 0.5rem 0.9rem 0.7rem 0.4rem !important; background: transparent !important; border-top: 0 !important; gap: 0.4rem; }
+  html:not([data-text-size="muy-grande"]) .pos-cart-panel .btn-checkout { height: 3.4rem !important; }
+}
+
+/* MESAS en tableta o celular con poca altura: resumen en una sola fila */
+@media (max-height: 700px) {
+  .tables-view-header { margin-bottom: 0.5rem; gap: 0.4rem; }
+  #viewTables .tables-view-header h2 { font-size: 1.3rem; }
+  #viewTables .tables-view-header .help-text { font-size: 0.95rem; }
+  .tables-kpi-bar { gap: 0.4rem; margin-bottom: 0.6rem; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .table-kpi-chip { padding: 0.4rem 0.6rem; gap: 0.1rem; }
+  .kpi-chip-label { font-size: 0.78rem !important; letter-spacing: 0; line-height: 1.15; }
+  .kpi-chip-val { font-size: 1.25rem; }
+  .tables-filters-bar { gap: 0.4rem; margin-bottom: 0.7rem; }
+  .tables-grid { gap: 0.7rem; padding-bottom: 1rem; }
+}
+@media (max-height: 700px) and (max-width: 699px) {
+  .tables-kpi-bar { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+/* "Quitar" en la cuenta de una mesa: el botón era de 42×42 y la palabra se salía del recuadro */
+.btn-remove-comanda-item {
+  width: auto !important; height: auto !important;
+  min-width: 5rem; min-height: 3rem;
+  padding: 0.3rem 0.7rem !important;
+  font-size: 1rem !important; font-weight: 800;
+  white-space: nowrap; gap: 0.3rem;
+}
+
+/* Celulares angostos (320–380 px): formas de pago, encabezado y barra de abajo sin cortarse */
+@media (max-width: 400px) {
+  .pay-method-btn { font-size: 0.85rem; padding-left: 0.2rem; padding-right: 0.2rem; }
+  .pay-footer-change { font-size: 1.05rem; }
+}
+@media (max-width: 360px) {
+  .header-actions { flex-wrap: wrap !important; gap: 0.35rem; }
+  #btnShiftStatus { flex: 1 1 100%; justify-content: center; white-space: nowrap; }
+  #btnLogout { flex: 1 1 auto; justify-content: center; }
+  .tablet-floating-cart-bar { flex-wrap: wrap; justify-content: stretch; }
+  .tablet-floating-info { flex: 1 1 100%; }
+  .tablet-floating-btn-pay { flex: 1 1 100%; justify-content: center; }
+  body[data-tab="pos"] .main-view, body:not([data-tab]) .main-view { padding-bottom: 8.2rem !important; }
+  .pos-products-grid { padding-bottom: 8.5rem !important; }
+}
+
+/* Tablas: las etiquetas y botones no se parten en tres renglones (la tabla se desliza de lado si hace falta) */
+td .badge-status, td .badge-role, td .btn { white-space: nowrap; }
+
+/* Mesas con letra grande: tarjetas más anchas para que el nombre y los botones quepan */
+html[data-text-size="grande"] .tables-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 350px), 1fr)); }
+html[data-text-size="muy-grande"] .tables-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 430px), 1fr)); }
+.table-status-pill { white-space: nowrap; }
+
+/* Celular con letra grande: nada se sale de su cuadro */
+.table-btn-action { white-space: normal; text-align: center; line-height: 1.15; }
+.table-card-actions { flex-wrap: wrap; }
+.comanda-item-row { flex-wrap: wrap; }
+.comanda-item-info { flex: 1 1 9rem; }
+@media (max-width: 699px) {
+  html[data-text-size="grande"] .payment-methods-grid,
+  html[data-text-size="muy-grande"] .payment-methods-grid { grid-template-columns: minmax(0, 1fr) !important; }
+  html[data-text-size="grande"] .pay-method-btn,
+  html[data-text-size="muy-grande"] .pay-method-btn { flex-direction: row; justify-content: flex-start; gap: 0.7rem; min-height: 3.4rem; padding: 0.4rem 1rem; }
+  html[data-text-size="grande"] .pay-method-btn .icon,
+  html[data-text-size="muy-grande"] .pay-method-btn .icon { font-size: 1.6rem; }
+}
+
+/* Cobro en el panel: con la tableta acostada y bajita, el panel es una cuadrícula; el cobro ocupa todo el ancho */
+@media (min-width: 700px) and (max-width: 900px) and (max-height: 700px) {
+  html:not([data-text-size="muy-grande"]) .pos-cart-panel.pay-mode > .pay-panel { grid-column: 1 / -1; grid-row: 3 / span 2; min-height: 0; }
+}
+/* Cobro con letra grande: formas de pago una debajo de la otra (en cualquier ancho) */
+html[data-text-size="grande"] .pay-panel .payment-methods-grid,
+html[data-text-size="muy-grande"] .pay-panel .payment-methods-grid { grid-template-columns: minmax(0, 1fr) !important; }
+html[data-text-size="grande"] .pay-panel .pay-method-btn,
+html[data-text-size="muy-grande"] .pay-panel .pay-method-btn { flex-direction: row; justify-content: flex-start; gap: 0.7rem; min-height: 3.4rem; padding: 0.4rem 1rem; font-size: 1.05rem; }
+html[data-text-size="grande"] .pay-panel .pay-method-btn .icon,
+html[data-text-size="muy-grande"] .pay-panel .pay-method-btn .icon { font-size: 1.6rem; }
+html[data-text-size="grande"] .pay-panel .pay-method-btn.active::after,
+html[data-text-size="muy-grande"] .pay-panel .pay-method-btn.active::after { top: 50%; right: 0.7rem; transform: translateY(-50%); font-size: 1.2rem; }
+
+/* ---------- 28. Pantalla de venta en tableta acostada y computadora (más de 900 px) ----------
+   Antes la pantalla completa se alargaba con la lista de bebidas y el botón COBRAR del panel de la derecha quedaba
+   muy abajo (había que deslizar toda la página). Ahora la lista de bebidas y el pedido se deslizan por dentro,
+   y el panel de la derecha ocupa la altura de la pantalla con COBRAR siempre a la vista. */
+@media (min-width: 901px) {
+  #viewPos:not([style*="none"]) { display: flex !important; flex-direction: column; flex: 1 1 0; min-height: 0; }
+  #viewPos > .pos-layout { flex: 1 1 0 !important; min-height: 0 !important; height: auto !important; grid-template-rows: minmax(0, 1fr) !important; }
+  #viewPos .pos-catalog-panel { min-height: 0; }
+  #viewPos .pos-products-grid { flex: 1 1 0; min-height: 0; }
+  #viewPos .pos-cart-panel { min-height: 0; }
+}
+
+/* Botones del teclado del cobro: misma letra que el resto y tamaños chicos de "Borrar" */
+.pay-panel button { font-family: inherit; }
+@media (min-width: 700px) and (max-width: 900px) {
+  .pay-panel .btn-numpad-clear { font-size: 0.8rem !important; }
+  .pay-panel .btn-numpad-clear-all { font-size: 0.92rem !important; }
+}
+
+/* La nota del cobro ya dice "Nota (opcional)" en el propio cuadro: se oculta el título repetido */
+.pay-panel .pay-panel-body > .form-group > .form-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Panel de la derecha en pantalla ancha pero bajita (computadora chica, tableta acostada con barras del navegador):
+   todo más compacto para que la lista del pedido tenga lugar y COBRAR no se corte */
+@media (min-width: 901px) and (max-height: 700px) {
+  #viewPos .cart-header { padding: 0.45rem 0.8rem; }
+  #viewPos .cart-header h2 { font-size: 1.05rem; }
+  #viewPos .pos-table-badge { padding: 0.3rem 0.5rem; margin: 0.3rem 0.5rem 0; gap: 0.3rem; }
+  #viewPos .pos-table-badge .btn { min-height: 2.4rem; padding: 0.2rem 0.6rem; }
+  #viewPos .cart-items-list { min-height: 6.5rem !important; padding: 0.4rem !important; }
+  #viewPos .cart-footer { padding: 0.45rem 0.7rem 0.6rem !important; gap: 0.3rem; }
+  #viewPos .cart-row { font-size: 0.95rem; }
+  #viewPos .cart-row.total-row { font-size: 1.15rem; }
+  #viewPos .cart-discount-input { min-height: 2.3rem; }
+  #viewPos .btn-checkout { height: 3.1rem !important; min-height: 3.1rem !important; padding-top: 0.2rem !important; padding-bottom: 0.2rem !important; font-size: 1.2rem !important; }
+  #viewPos .pos-table-badge { flex-wrap: nowrap !important; }
+  #viewPos .pos-table-badge-left { gap: 0.4rem; min-width: 0; flex: 1 1 auto; }
+  #viewPos .pos-table-badge-right .btn { font-size: 0.85rem; padding: 0.2rem 0.5rem; white-space: nowrap; }
+  #viewPos .pos-table-name { font-size: 1rem; }
+  #viewPos .pos-table-sub { font-size: 0.8rem; }
+}
+
+/* Al cobrar en celular o tableta, el panel que sube desde abajo es más alto para que el botón COBRAR nunca se corte */
+@media (max-width: 900px) {
+  .pos-cart-panel.pay-mode { height: 94dvh !important; max-height: 94dvh !important; }
+}
+
+/* ---------- 29. Dibujos de las bebidas (en lugar de emojis) ---------- */
+.product-icon {
+  --dibujo: 4rem;
+  width: var(--dibujo); height: var(--dibujo);
+  flex: 0 0 auto; line-height: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.product-icon img {
+  display: block; width: 100%; height: 100%;
+  object-fit: contain; pointer-events: none; user-select: none; -webkit-user-drag: none;
+}
+/* Solo se ve si el dibujo no se encontró */
+.product-icon .product-icon-emoji { font-size: 2.3rem; line-height: 1; }
+
+/* Tamaño parecido en pixeles sin importar el tamaño de letra que eligió la persona */
+html[data-text-size="grande"] .product-icon { --dibujo: 3.3rem; }
+html[data-text-size="muy-grande"] .product-icon { --dibujo: 3rem; }
+
+/* Celulares y tabletas: un poco más chico para que quepan más bebidas */
+@media (max-width: 900px) {
+  .product-icon { --dibujo: 3.4rem; }
+  html[data-text-size="grande"] .product-icon { --dibujo: 2.8rem; }
+  html[data-text-size="muy-grande"] .product-icon { --dibujo: 2.6rem; }
+}
+/* Pantallas bajitas (tableta o celular acostado) */
+@media (max-height: 700px) and (min-width: 700px) {
+  .product-icon { --dibujo: 2.9rem; }
+  html[data-text-size="grande"] .product-icon { --dibujo: 2.4rem; }
+  html[data-text-size="muy-grande"] .product-icon { --dibujo: 2.2rem; }
+}
+
+/* ---------- 30. Fotos reales de los productos ---------- */
+/* La foto se ve un poco más grande que el dibujo */
+.product-icon.has-photo { --dibujo: 5.2rem; }
+html[data-text-size="grande"] .product-icon.has-photo { --dibujo: 4.2rem; }
+html[data-text-size="muy-grande"] .product-icon.has-photo { --dibujo: 3.7rem; }
+.product-icon img.product-photo, .product-photo { border-radius: 14px; object-fit: cover; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14); background: #fff; }
+@media (max-width: 900px) {
+  .product-icon.has-photo { --dibujo: 4.3rem; }
+  html[data-text-size="grande"] .product-icon.has-photo { --dibujo: 3.5rem; }
+  html[data-text-size="muy-grande"] .product-icon.has-photo { --dibujo: 3.1rem; }
+}
+@media (max-height: 700px) and (min-width: 700px) {
+  .product-icon.has-photo { --dibujo: 3.4rem; }
+  html[data-text-size="grande"] .product-icon.has-photo { --dibujo: 2.8rem; }
+  html[data-text-size="muy-grande"] .product-icon.has-photo { --dibujo: 2.5rem; }
+}
+
+/* Cuadro de agregar / cambiar producto: foto y botones */
+.prod-photo-row { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.prod-photo-preview {
+  width: 6.5rem; height: 6.5rem; flex: 0 0 auto; border-radius: 16px; overflow: hidden;
+  background: var(--bg-secondary); border: 1px solid var(--border-color);
+  display: flex; align-items: center; justify-content: center;
+}
+.prod-photo-preview img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.prod-photo-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; flex: 1 1 14rem; min-width: 0; }
+.prod-photo-actions .help-text { flex: 1 1 100%; margin: 0.15rem 0 0; }
+@media (max-height: 700px) { .prod-photo-preview { width: 4.6rem; height: 4.6rem; } }
+
+/* Tabla del menú del administrador: miniatura junto al nombre */
+.prod-name-cell { display: flex; align-items: center; gap: 0.7rem; min-width: 0; }
+.prod-name-cell > div { min-width: 0; }
+.admin-thumb { flex: 0 0 auto; width: 3rem; height: 3rem; display: block; line-height: 0; }
+.admin-thumb img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
+.admin-thumb .product-icon-emoji { font-size: 1.8rem; line-height: 3rem; }
+
+/* ---------- 31. Cuadro "Secciones del menú" en celular: cada sección en su propia tarjeta (la tabla se cortaba con letra grande) ---------- */
+@media (max-width: 520px) {
+  #modalCategories .data-table thead { display: none; }
+  #modalCategories .data-table, #modalCategories .data-table tbody { display: block; width: 100%; }
+  #modalCategories .data-table tr {
+    display: grid; grid-template-columns: 2.6rem minmax(0, 1fr) auto; align-items: center; gap: 0.35rem 0.6rem;
+    padding: 0.55rem 0.3rem; border-bottom: 1px solid var(--border-color);
+  }
+  #modalCategories .data-table td { display: block; padding: 0 !important; border: 0 !important; text-align: left !important; min-width: 0; overflow-wrap: anywhere; }
+  #modalCategories .data-table td:first-child { text-align: center !important; }
+  #modalCategories .data-table td:nth-child(3)::before { content: 'Posición: '; color: var(--text-secondary); font-size: 0.85em; }
+  #modalCategories .data-table td:nth-child(4) { grid-column: 1 / -1; }
+  #modalCategories .data-table td:nth-child(4) .btn { width: 100%; justify-content: center; }
+  #modalCategories .data-table td[colspan] { grid-column: 1 / -1; text-align: center !important; }
+}
+
+/* ---------- 32. Menú y cuadro de producto, más simples ---------- */
+/* Lista del Menú: agrupada por sección */
+#viewProducts .data-table tr.section-row th {
+  text-align: left; padding: 0.65rem 0.9rem; font-size: 1.05rem; font-weight: 800;
+  color: var(--accent-amber); background: rgba(255, 255, 255, 0.04); border-bottom: 1px solid var(--border-color);
+}
+#viewProducts .data-table tr.section-row th small { color: var(--text-secondary); font-weight: 600; }
+#viewProducts .data-table tr.row-paused td:first-child { opacity: 0.6; }
+.prod-price-mobile { display: none; font-weight: 800; color: var(--accent-amber); margin-top: 0.15rem; }
+#viewProducts .row-actions { display: flex; flex-wrap: nowrap; gap: 0.4rem; }
+#viewProducts .row-actions .btn { white-space: nowrap; }
+#viewProducts .col-price { white-space: nowrap; width: 1%; }
+
+@media (max-width: 760px) {
+  #viewProducts .data-table thead { display: none; }
+  #viewProducts .data-table, #viewProducts .data-table tbody { display: block; width: 100%; }
+  #viewProducts .data-table tr { display: flex; flex-direction: column; gap: 0.5rem; padding: 0.7rem 0.6rem; border-bottom: 1px solid var(--border-color); }
+  #viewProducts .data-table td { display: block; padding: 0 !important; border: 0 !important; min-width: 0; }
+  #viewProducts .data-table td.col-price { display: none !important; }
+  #viewProducts .prod-price-mobile { display: block; }
+  #viewProducts .data-table tr.section-row { display: block; padding: 0; }
+  #viewProducts .data-table tr.section-row th { display: block; }
+  #viewProducts .row-actions { flex-wrap: wrap; }
+  #viewProducts .row-actions .btn { flex: 1 1 auto; justify-content: center; }
+  #viewProducts .data-table td[colspan] { text-align: center; }
+}
+
+/* Cuadro de producto: lo básico arriba, el resto escondido en "Más opciones" */
+.check-row { display: flex; align-items: center; gap: 0.7rem; cursor: pointer; font-weight: 700; min-height: 2.8rem; }
+.check-row input[type="checkbox"] { width: 1.5rem; height: 1.5rem; flex: 0 0 auto; accent-color: var(--accent-gold); }
+.check-row small { color: var(--text-secondary); font-weight: 500; }
+
+.prod-more { margin: 0.4rem 0 1rem; border: 1px dashed var(--border-color); border-radius: 14px; background: rgba(255, 255, 255, 0.02); }
+.prod-more > summary {
+  list-style: none; cursor: pointer; padding: 0.85rem 1rem; font-weight: 800; min-height: 3rem;
+  display: flex; align-items: center; gap: 0.5rem; border-radius: 14px;
+}
+.prod-more > summary::-webkit-details-marker { display: none; }
+.prod-more > summary::after { content: '▾'; margin-left: auto; font-size: 1.2rem; transition: transform 0.15s; }
+.prod-more[open] > summary::after { transform: rotate(180deg); }
+.prod-more > summary small { color: var(--text-secondary); font-weight: 500; }
+.prod-more-body { padding: 0.2rem 1rem 1rem; }
+
+/* El botón Guardar siempre queda a la vista, aunque abran "Más opciones" */
+.prod-save-bar {
+  position: sticky; bottom: 0; z-index: 2; margin: 0 -0.2rem; padding: 0.7rem 0.2rem 0.2rem;
+  background: linear-gradient(to bottom, rgba(24, 32, 48, 0), var(--bg-surface) 28%);
+}
+
+/* ---------- 33. Secciones del menú (lista simple) y foto en celular ---------- */
+.new-category-form .nc-name { flex: 1 1 14rem; }
+.cat-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.cat-row {
+  display: flex; align-items: center; gap: 0.7rem; padding: 0.6rem 0.8rem; min-width: 0;
+  background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px;
+}
+.cat-row-icon { font-size: 1.6rem; line-height: 1; flex: 0 0 auto; width: 2rem; text-align: center; }
+.cat-row-name { flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; }
+.cat-row-actions { display: flex; align-items: center; gap: 0.35rem; flex: 0 0 auto; flex-wrap: wrap; justify-content: flex-end; }
+.btn-icon-only { min-width: 2.8rem; padding-left: 0.5rem !important; padding-right: 0.5rem !important; justify-content: center; }
+.btn-icon-only[disabled] { opacity: 0.35; cursor: default; }
+@media (max-width: 520px) {
+  .cat-row { flex-wrap: wrap; }
+  .cat-row-actions { flex: 1 1 100%; justify-content: stretch; }
+  .cat-row-actions .btn-danger-soft { flex: 1 1 auto; justify-content: center; }
+  /* Foto y botones lado a lado para que el nombre y el precio queden a la vista sin deslizar */
+  .prod-photo-row { flex-wrap: nowrap; align-items: flex-start; gap: 0.7rem; }
+  .prod-photo-preview { width: 5.2rem; height: 5.2rem; }
+  .prod-photo-actions { flex: 1 1 0; flex-direction: column; align-items: stretch; gap: 0.4rem; }
+  .prod-photo-actions .btn { width: 100%; justify-content: center; }
+}
+
+/* ---------- 34. Quitar mesa (solo administrador, mesas libres) ---------- */
+.btn-table-delete { width: 100%; min-height: 2.6rem; justify-content: center; font-weight: 700; }
+
+/* ---------- 35. Sucursales ---------- */
+.branch-picker { display: inline-flex; align-items: center; gap: 0.4rem; min-width: 0; }
+.branch-picker-label { display: inline-flex; align-items: center; gap: 0.3rem; margin: 0; font-weight: 800; font-size: 0.95rem; white-space: nowrap; color: var(--text-secondary); }
+.branch-select {
+  min-height: 2.6rem; min-width: 0; max-width: 13rem; padding: 0.3rem 0.6rem;
+  font: inherit; font-weight: 800; font-size: 1rem; text-overflow: ellipsis;
+  color: var(--text-primary); background: var(--bg-secondary);
+  border: 2px solid var(--accent-amber); border-radius: 0.7rem; cursor: pointer;
+}
+.branch-select:focus-visible { outline: 3px solid rgba(251, 191, 36, 0.6); outline-offset: 2px; }
+.branch-chip {
+  display: inline-flex; align-items: center; gap: 0.35rem; min-height: 2.4rem; max-width: 13rem; padding: 0.2rem 0.7rem;
+  font-weight: 800; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  border: 2px solid var(--accent-amber); border-radius: 999px; color: var(--text-primary);
+}
+/* Con selector de sucursal la barra de arriba sigue cabiendo en una sola fila: se quita lo menos importante
+   (nombre y foto de quien entró, el texto "Pantalla completa", el distintivo de cargo y, en tabletas, algunas palabras). */
+@media (max-width: 1700px) {
+  #appView.has-picker .user-fullname-desktop,
+  #appView.has-picker .user-avatar,
+  #appView.has-picker .btn-label-optional { display: none !important; }
+}
+@media (max-width: 1300px) {
+  #appView.has-picker .user-profile { display: none; }
+}
+@media (max-width: 1100px) {
+  .branch-select { max-width: 12rem; }
+}
+/* El selector de la barra chica solo se ve cuando la barra de arriba está oculta (si no, saldría repetido) */
+.app-container:not(.header-discrete) .branch-picker-discrete { display: none !important; }
+@media (max-width: 1280px) { .branch-picker-word { display: none; } }
+@media (max-width: 700px) {
+  #appView.has-picker .header-actions { flex-wrap: wrap !important; }
+  #appView.has-picker .header-actions .branch-picker { flex: 1 1 100%; }
+  #appView.has-picker .header-actions .branch-select { flex: 1 1 auto; max-width: none; }
+  .branch-picker-word { display: inline; }
+  .branch-select { min-height: 2.4rem; }
+  .branch-chip { min-height: 2rem; }
+  .header-discrete .nav-discrete-right .branch-picker { flex: 1 1 100%; }
+  .header-discrete .nav-discrete-right .branch-select { flex: 1 1 auto; max-width: none; }
+}
+
+/* Etiqueta "qué sucursal estás viendo" junto al título de cada pantalla (solo si hay varias sucursales) */
+.scope-chip {
+  display: none; margin-left: 0.5rem; padding: 0.1rem 0.65rem; vertical-align: middle;
+  font-size: 0.85rem; font-weight: 800; white-space: nowrap;
+  color: var(--accent-amber); border: 1px solid var(--accent-amber); border-radius: 999px;
+}
+body.multi-branch .scope-chip { display: inline-block; }
+.multi-only { display: none; }
+body.multi-branch .multi-only { display: inline; }
+body.multi-branch small.multi-only { display: block; }
+body.multi-branch li.multi-only { display: list-item; }
+.col-branch { display: none; }
+body.multi-branch .col-branch { display: table-cell; }
+
+/* Pantalla "Elige una sucursal" (cuando se ven las dos juntas o falta asignar una) */
+.branch-gate { max-width: 34rem; margin: 2rem auto; padding: 1.5rem 1rem; text-align: center; }
+.branch-gate-icon { font-size: 3.5rem; line-height: 1; margin-bottom: 0.5rem; }
+.branch-gate h2 { margin-bottom: 0.5rem; }
+.branch-gate-buttons { display: flex; flex-direction: column; gap: 0.7rem; margin-top: 1.25rem; }
+.branch-gate-buttons .btn { min-height: 3.6rem; font-size: 1.15rem; justify-content: center; }
+
+/* Ajustes: lista de sucursales */
+#branchesCard { margin-bottom: 1.25rem; }
+.settings-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.branches-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.branch-row {
+  display: flex; align-items: center; gap: 0.7rem; padding: 0.6rem 0.8rem; min-width: 0; flex-wrap: wrap;
+  background: var(--bg-surface, var(--bg-secondary)); border: 1px solid var(--border-color); border-radius: 12px;
+}
+.branch-row-name { flex: 1 1 10rem; min-width: 0; overflow-wrap: anywhere; font-weight: 800; }
+.branch-row-name small { display: block; font-weight: 500; color: var(--text-secondary); }
+.branch-row-hidden { opacity: 0.75; border-style: dashed; }
+.branches-hidden-title { margin-top: 0.6rem; font-weight: 700; }
+
+/* Casillas para elegir sucursales */
+.check-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.check-row {
+  display: flex; align-items: center; gap: 0.7rem; min-height: 3rem; padding: 0.5rem 0.8rem; cursor: pointer;
+  font-weight: 700; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px;
+}
+.check-row input { width: 1.4rem; height: 1.4rem; flex: 0 0 auto; accent-color: var(--accent-amber); }
+fieldset.branch-checks { border: 0; padding: 0; margin: 0 0 1rem; min-width: 0; }
+fieldset.branch-checks legend { padding: 0; margin-bottom: 0.4rem; }
+.users-branches-cell { max-width: 16rem; white-space: normal; overflow-wrap: anywhere; }
+.badge-branch { display: inline-block; margin: 0.1rem 0.2rem 0.1rem 0; padding: 0.15rem 0.55rem; border-radius: 999px; font-size: 0.85rem; font-weight: 700; background: var(--bg-surface-hover, rgba(255,255,255,0.1)); }
+
+/* ---------- 36. En computadora (con mouse) todo se ve un poco más chico ---------- */
+/* Equivale a ver la página con el zoom del navegador al 80 %. En tabletas y celulares (pantalla táctil) no cambia nada,
+   para que los botones sigan siendo cómodos para el dedo. Al imprimir tampoco cambia (por eso "screen").
+   Como "zoom" encoge también las alturas en vh/dvh, se las vuelve a agrandar dividiendo entre el mismo factor. */
+:root { --ui-zoom: 1; }
+@supports (zoom: 0.8) {
+  @media screen and (hover: hover) and (pointer: fine) and (min-width: 1100px) {
+    :root { --ui-zoom: 0.8; }
+    html { zoom: var(--ui-zoom); }
+    html, body, .app-container { height: calc(100dvh / var(--ui-zoom)); }
+    body, .auth-wrapper { min-height: calc(100vh / var(--ui-zoom)); }
+    .modal-content { max-height: calc(94dvh / var(--ui-zoom)); }
+  }
+  @media screen and (hover: hover) and (pointer: fine) and (min-width: 1100px) and (max-height: 700px) {
+    .modal-content { max-height: calc(100dvh / var(--ui-zoom) - 0.8rem) !important; }
+  }
+}
+
+/* ---------- 37. La imagen del producto llena todo el recuadro de arriba y el nombre va escrito encima ---------- */
+/* Computadora y tableta de pie: la imagen ocupa todo el ancho de la tarjeta, de borde a borde, y el nombre queda sobre ella
+   (con una sombra oscura abajo para que se lea). La etiqueta (Nacional, Especial...) queda en la esquina de arriba.
+   Celular y tableta acostados: la imagen va a la izquierda, también de borde a borde, y el texto a la derecha. */
+.pos-products-grid { --hero: 7rem; }   /* ancho de la imagen en celular y tableta acostada */
+html[data-text-size="grande"] .pos-products-grid { --hero: 5.8rem; }
+html[data-text-size="muy-grande"] .pos-products-grid { --hero: 5.2rem; }
+
+.pos-products-grid .product-card { padding: 0 0 0.85rem !important; gap: 0.45rem !important; overflow: hidden !important; }
+.pos-products-grid .product-card > .product-card-body,
+.pos-products-grid .product-card > .product-footer,
+.pos-products-grid .product-card > .product-add-hint { margin-left: 0.9rem; margin-right: 0.9rem; }
+.pos-products-grid .product-card > .product-card-body,
+.pos-products-grid .product-card > .product-footer,
+.pos-products-grid .product-card > .product-add-hint { width: calc(100% - 1.8rem) !important; min-width: 0; box-sizing: border-box; }
+.pos-products-grid .product-card > .product-card-body { flex: 0 0 auto; min-height: 0 !important; }
+.pos-products-grid .product-card > .btn-cust-trigger { width: calc(100% - 1.8rem); margin-left: 0.9rem; margin-right: 0.9rem; }
+
+.pos-products-grid .product-card .product-card-header {
+  display: block !important; position: relative; flex: 0 0 auto; width: 100%; margin: 0 !important;
+  aspect-ratio: 1 / 0.9; max-height: 17rem; overflow: hidden; background: #10141f;
+}
+.product-card .product-icon { position: absolute !important; inset: 0; width: 100% !important; height: 100% !important; margin: 0; }
+.product-card .product-icon img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  border-radius: 0 !important; box-shadow: none !important;
+}
+.product-card .product-icon:not(.has-photo) img { object-position: 50% 12%; }   /* del dibujo se ve primero la parte de arriba (la tapa) */
+.product-card .product-card-header .product-name {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; margin: 0;
+  padding: 2.2rem 0.85rem 0.6rem; font-size: 1.1rem; line-height: 1.2; font-weight: 800; color: #fff;
+  background: linear-gradient(to top, rgba(6, 9, 16, 0.94) 0%, rgba(6, 9, 16, 0.78) 45%, rgba(6, 9, 16, 0) 100%);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.85);
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; overflow-wrap: anywhere;
+}
+.product-card .product-badge {
+  position: absolute; top: 0.5rem; right: 0.5rem; z-index: 2;
+  font-size: 0.8rem; padding: 0.12rem 0.5rem;
+  background: rgba(17, 24, 39, 0.92); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+}
+@media (max-height: 700px) and (min-width: 700px) {            /* pantallas bajitas: imagen menos alta */
+  .pos-products-grid .product-card .product-card-header { aspect-ratio: 1 / 0.75; }
+  .product-card .product-card-header .product-name { padding-top: 1.6rem; font-size: 1rem; }
+}
+
+/* Ancho de la imagen según la pantalla (solo cuando va a la izquierda) */
+@media (max-width: 700px) {                                     /* celular de pie */
+  .pos-products-grid { --hero: 6.4rem !important; }
+  html[data-text-size="grande"] .pos-products-grid { --hero: 5.2rem !important; }
+  html[data-text-size="muy-grande"] .pos-products-grid { --hero: 4.7rem !important; }
+}
+@media (pointer: coarse) and (orientation: landscape) and (min-width: 701px) and (max-width: 1400px) {   /* tableta acostada */
+  .pos-products-grid { --hero: 6rem !important; }
+  html[data-text-size="grande"] .pos-products-grid { --hero: 5rem !important; }
+  html[data-text-size="muy-grande"] .pos-products-grid { --hero: 4.5rem !important; }
+}
+@media (pointer: coarse) and (orientation: landscape) and (max-height: 500px) {                          /* celular acostado */
+  .pos-products-grid { --hero: 4.8rem !important; }
+  html[data-text-size="grande"] .pos-products-grid { --hero: 4rem !important; }
+  html[data-text-size="muy-grande"] .pos-products-grid { --hero: 3.7rem !important; }
+}
+/* Imagen a la izquierda (de arriba a abajo de la tarjeta), texto a la derecha */
+@media (max-width: 700px), (pointer: coarse) and (orientation: landscape) and (max-width: 1400px) {
+  .pos-products-grid .product-card {
+    display: grid !important; grid-template-columns: var(--hero) minmax(0, 1fr);
+    column-gap: 0; row-gap: 0.1rem; align-items: center; align-content: stretch;
+    padding: 0 !important; min-height: var(--hero);
+  }
+  .pos-products-grid .product-card .product-card-header { display: contents !important; }
+  .product-card .product-icon {
+    position: relative !important; inset: auto; grid-column: 1; grid-row: 1 / span 5;
+    align-self: stretch; width: 100% !important; height: 100% !important; min-height: var(--hero);
+  }
+  .product-card .product-card-header .product-name {
+    position: static; grid-column: 2; grid-row: 2; padding: 0.1rem 0.8rem 0; font-size: 1.05rem;
+    background: none; text-shadow: none; color: var(--text-primary); -webkit-line-clamp: 4;
+  }
+  .product-card .product-badge { position: static; grid-column: 2; grid-row: 1; justify-self: start; margin: 0.5rem 0.8rem 0; }
+  .pos-products-grid .product-card > .product-footer { grid-column: 2; grid-row: 3; margin: 0 0.8rem 0.5rem; width: calc(100% - 1.6rem) !important; }
+  .pos-products-grid .product-card > .product-card-body,
+  .pos-products-grid .product-card > .product-add-hint { display: none !important; }
+  .product-card .product-stock-tag { white-space: nowrap; }
+  .pos-products-grid .product-card > .btn-cust-trigger { grid-column: 1 / -1; grid-row: 5; margin: 0 0.8rem 0.6rem; width: calc(100% - 1.6rem); }
+}
+
+/* ---------- 38. Barra de pestañas del administrador en tableta: ordenada y más baja ---------- */
+/* Antes las 9 pestañas se partían en dos filas disparejas y los botones quedaban sueltos en una tercera fila.
+   Ahora: las pestañas van en una fila pareja (ícono arriba, nombre abajo) y los botones en su propia fila, todos de la misma altura. */
+@media (min-width: 901px) and (max-width: 1300px) and (pointer: coarse), (min-width: 901px) and (max-width: 1099px) {
+  .is-admin .nav-tabs-left { flex: 1 1 100%; }
+  .is-admin .nav-tab-buttons { flex-wrap: nowrap !important; width: 100%; gap: 0.3rem !important; }
+  .is-admin .nav-tab-btn {
+    flex: 1 1 0 !important; min-width: 0; flex-direction: column; justify-content: center; align-items: center;
+    gap: 0.1rem; min-height: 3.6rem; padding: 0.3rem 0.15rem !important;
+    font-size: 0.85rem !important; line-height: 1.12; text-align: center; white-space: normal;
+  }
+  html[data-text-size="grande"] .is-admin .nav-tab-btn { font-size: 0.7rem !important; }
+  html[data-text-size="muy-grande"] .is-admin .nav-tab-btn { font-size: 0.62rem !important; }
+  .is-admin .nav-tab-btn .tab-ico { font-size: 1.4em; line-height: 1; }
+}
+/* Tableta de pie: dos filas parejas (5 + 4), cada pestaña del mismo ancho */
+@media (min-width: 701px) and (max-width: 900px) {
+  .is-admin .nav-tabs-left { flex: 1 1 100%; }
+  .is-admin .nav-tab-buttons { display: grid !important; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.3rem !important; width: 100%; }
+  .is-admin .nav-tab-btn {
+    justify-content: center; text-align: center; min-height: 2.7rem; padding: 0.3rem 0.2rem !important;
+    white-space: normal; line-height: 1.1; font-size: 0.9rem !important; gap: 0.25rem;
+  }
+}
+/* Los botones de la barra chica en su propia fila, a la derecha, todos de la misma altura */
+@media (min-width: 701px) and (max-width: 1300px) {
+  .is-admin.header-discrete .nav-discrete-right { flex: 1 1 100%; justify-content: flex-end; margin-left: 0; gap: 0.4rem; }
+  .is-admin.header-discrete .nav-discrete-right > * { min-height: 2.5rem; }
+  .is-admin.header-discrete .nav-discrete-right .branch-select { min-height: 2.5rem; border-width: 1.5px; }
+  .is-admin.header-discrete .nav-tabs { row-gap: 0.4rem; padding-bottom: 0.45rem !important; }
+}
+/* Celulares angostos con letra muy grande: el botón "Quitar" de la cuenta de una mesa cabe dentro del cuadro */
+@media (max-width: 400px) {
+  .comanda-item-row { padding: 0.6rem 0.6rem; gap: 0.5rem; }
+  .comanda-item-row > div:last-child { flex-wrap: wrap; gap: 0.4rem !important; }
+  .btn-remove-comanda-item { min-width: 4rem; padding: 0.3rem 0.5rem !important; }
+}
+
+/* ===================================================
+   §39  Presentaciones que elige el cliente (vidrio / lata...)
+   =================================================== */
+/* Tarjeta del menú: aviso corto de que se elige al tocar */
+.product-stock-tag.opt-tag { color: var(--accent-amber); font-weight: 800; }
+
+/* Cuadro "¿Cuál quiere el cliente?": un botón grande por presentación */
+.opt-modal { max-width: 34rem; }
+.opt-product-name { font-size: 1.15rem; font-weight: 800; margin: 0 0 0.9rem; line-height: 1.3; overflow-wrap: anywhere; }
+.opt-choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: 0.7rem; }
+.opt-choice {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.25rem;
+  min-height: 5.2rem; padding: 0.8rem 0.7rem; border-radius: 0.9rem; cursor: pointer; text-align: center;
+  background: var(--bg-secondary); color: inherit; font: inherit;
+  border: 2px solid rgba(245, 158, 11, 0.55);
+  transition: background 0.12s, border-color 0.12s, transform 0.08s;
+}
+.opt-choice:hover, .opt-choice:focus-visible { background: rgba(245, 158, 11, 0.16); border-color: var(--accent-gold); }
+.opt-choice:active { transform: scale(0.98); }
+.opt-choice-label { font-size: 1.25rem; font-weight: 900; line-height: 1.2; overflow-wrap: anywhere; }
+.opt-stock { display: block; font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); }
+.opt-stock.low { color: var(--bad-text); font-weight: 800; }
+
+/* Dentro del cuadro de personalizar: las presentaciones van arriba, como botones de elegir una */
+.opt-radio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+.opt-radio-grid .option-card span { display: flex; flex-direction: column; gap: 0.1rem; }
+@media (max-width: 420px) { .opt-radio-grid { grid-template-columns: 1fr; } }
+
+/* Menú del administrador: filas de opciones */
+.prod-options { margin-top: 1.2rem; padding-top: 0.4rem; border-top: 1px dashed var(--border-color); }
+.prod-options .recipe-head { margin-top: 0.6rem; }
+.prod-options-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.prod-option-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 2fr) minmax(4.5rem, 0.7fr) 2.6rem auto;
+  gap: 0.5rem; align-items: center;
+  background: var(--bg-secondary); padding: 0.5rem; border-radius: 0.6rem;
+}
+.prod-option-row .opt-unit { text-align: left; }
+@media (max-width: 700px) {
+  .prod-option-row { grid-template-columns: minmax(0, 1fr) minmax(5rem, 0.6fr) 2.4rem; }
+  .prod-option-row .opt-label, .prod-option-row .opt-item { grid-column: 1 / -1; }
+  .prod-option-row .opt-qty { grid-column: 1; }
+  .prod-option-row [data-act="del-opt"] { grid-column: 1 / -1; justify-self: end; }
+}
+.opt-list-tag { background: rgba(245, 158, 11, 0.16); color: var(--accent-amber); border: 1px solid rgba(245, 158, 11, 0.4); }
+
+/* Celulares angostos con letra muy grande: el cuadro de personalizar (escarchado, opciones y botones) no se sale de la pantalla */
+@media (max-width: 400px) {
+  #custEscarchadoList { grid-template-columns: 1fr !important; }
+  .modal-footer { flex-wrap: wrap; }
+  #modalCustomization .modal-footer .btn { flex: 1 1 100% !important; min-width: 0; }
+}
+
+/* ---------- 40. Tabletas y pantallas bajitas: el pedido SIEMPRE se ve ---------- */
+/* El pedido (derecha) ya no lleva Subtotal ni Descuento. Con poca altura, el recuadro de la mesa y los totales
+   se compactan y la lista de lo pedido tiene un alto mínimo propio: antes se aplastaba hasta quedar en una rayita. */
+@media (min-width: 901px) and (max-height: 860px) {
+  .pos-cart-panel { overflow-y: auto !important; }
+  .pos-cart-panel .cart-header { padding: 0.4rem 0.65rem !important; }
+  .pos-cart-panel .cart-header .btn { min-height: 2.3rem !important; padding-top: 0.2rem !important; padding-bottom: 0.2rem !important; }
+  .pos-cart-panel .pos-table-badge { margin: 0.4rem 0.5rem 0 !important; padding: 0.3rem 0.5rem !important; row-gap: 0.3rem; flex-shrink: 0; }
+  .pos-cart-panel .pos-table-sub { display: none !important; }
+  .pos-cart-panel .pos-table-info { flex-direction: row !important; flex-wrap: wrap; align-items: baseline; gap: 0.1rem 0.5rem; }
+  .pos-cart-panel .pos-table-badge-right { flex-wrap: wrap; justify-content: flex-end; }
+  .pos-cart-panel .pos-table-badge-right .btn { min-height: 2.2rem !important; padding: 0.15rem 0.5rem !important; font-size: 0.85rem !important; }
+  .pos-cart-panel .cart-items-list { flex: 1 1 auto !important; min-height: 9.5rem !important; padding: 0.5rem !important; }
+  .pos-cart-panel .cart-footer { padding: 0.45rem 0.65rem !important; gap: 0.4rem !important; flex-shrink: 0; }
+  .pos-cart-panel .cart-row.total-row { font-size: 1.2rem !important; padding-top: 0.1rem !important; border-top: none !important; }
+  .pos-cart-panel .table-cart-actions { margin-bottom: 0 !important; gap: 0.4rem !important; flex-wrap: nowrap !important; }
+  .pos-cart-panel .table-cart-actions .btn { flex: 1 1 0 !important; min-height: 2.6rem !important; padding: 0.25rem 0.4rem !important; font-size: 0.82rem !important; line-height: 1.15; }
+  .pos-cart-panel .btn-checkout { padding: 0.55rem 0.6rem !important; font-size: 1rem !important; margin-top: 0 !important; min-height: 3rem;
+    display: block !important; text-align: center; line-height: 1.25; }
+  /* Con una mesa elegida solo se ofrece “Quitar mesa” (cambiar de mesa = quitarla y elegir otra): el nombre cabe en una sola línea */
+  .pos-cart-panel .pos-table-badge.is-table-active #btnSwitchTable { display: none !important; }
+  .pos-cart-panel .pos-table-badge-left { flex: 1 1 8rem; }
+  .pos-cart-panel .pos-table-name { white-space: nowrap; }
+  .pos-cart-panel .pos-table-client { white-space: nowrap; }
+  /* Lo ya guardado en la cuenta: nombre y precio arriba, y una sola línea de aviso abajo */
+  .pos-cart-panel .cart-item { padding: 0.5rem 0.6rem !important; gap: 0.25rem !important; }
+  .pos-cart-panel .cart-item-saved .saved-help { display: none; }
+  .pos-cart-panel .cart-item-saved .cart-item-header { align-items: flex-start; gap: 0.5rem; }
+  .pos-cart-panel .cart-item-saved .cart-item-subtotal { white-space: nowrap; flex-shrink: 0; }
+  .pos-cart-panel .cart-item-saved .saved-tag { font-size: 0.8rem; }
+}
+
+/* Tabletas (pantalla táctil) con poca altura: una sola barra delgada.
+   La barra de arriba (nombre, sucursal, caja, salir) y las pestañas se juntan en una fila:
+   a la izquierda el botón “☰ Pantalla actual ▾” que despliega las pestañas, a la derecha lo importante de siempre. */
+.nav-menu-btn { display: none; }
+@media (pointer: coarse) and (min-width: 700px) and (max-height: 860px) {
+  .app-container .app-header {
+    max-height: 0 !important; min-height: 0 !important; height: 0 !important; padding: 0 !important; margin: 0 !important;
+    opacity: 0 !important; overflow: hidden !important; border: none !important; pointer-events: none !important;
+  }
+  .app-container .nav-tabs {
+    height: 3rem !important; min-height: 3rem !important; padding: 0.2rem 0.5rem !important; flex-wrap: nowrap !important;
+    background: #0f172a !important; border-bottom: 1px solid rgba(245, 158, 11, 0.25) !important;
+  }
+  .app-container .nav-tabs-left { overflow: visible !important; flex-wrap: nowrap !important; flex: 0 1 auto; }
+  .app-container .discrete-brand, .app-container .btn-restore { display: none !important; }
+  .app-container .nav-discrete-right { display: flex !important; flex-wrap: nowrap !important; margin-left: auto; gap: 0.35rem; }
+  .app-container .nav-discrete-right .btn-discrete-shift,
+  .app-container .nav-discrete-right .btn-discrete-action:not(.btn-restore) { display: inline-flex !important; }
+
+  .nav-menu-btn {
+    display: inline-flex; align-items: center; gap: 0.5rem; min-height: 2.6rem; padding: 0.25rem 0.9rem;
+    font-size: 1rem; font-weight: 800; color: #000; background: var(--accent-gold);
+    border: none; border-radius: var(--radius-sm); cursor: pointer; white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+  }
+  .nav-menu-btn .nav-menu-caret { transition: transform 0.15s; }
+  .nav-tabs.nav-open .nav-menu-btn .nav-menu-caret { transform: rotate(180deg); }
+
+  /* Las pestañas quedan escondidas hasta tocar el botón; salen como una lista grande debajo de la barra */
+  .app-container #navTabButtons { display: none !important; }
+  .app-container .nav-tabs.nav-open #navTabButtons {
+    display: flex !important; flex-wrap: wrap !important; gap: 0.5rem !important;
+    position: absolute; top: 100%; left: 0; right: 0; z-index: 90; padding: 0.6rem;
+    background: #0f172a; border-bottom: 2px solid rgba(245, 158, 11, 0.45); box-shadow: 0 14px 28px rgba(0, 0, 0, 0.6);
+  }
+  .app-container .nav-tabs.nav-open #navTabButtons .nav-tab-btn { flex: 1 1 9rem; min-height: 3.2rem; justify-content: center; }
+}
+
+/* ---------- 41. Anular ventas ---------- */
+.void-bar { margin-top: 0.75rem; text-align: center; }
+.void-bar .help-text { margin-top: 0.35rem; }
+.badge-void {
+  display: inline-block; padding: 0.1rem 0.55rem; border-radius: 999px; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.04em;
+  color: var(--bad-text); background: rgba(239, 68, 68, 0.22); border: 1px solid rgba(248, 113, 113, 0.7);
+}
+/* Ticket de una venta anulada */
+.ticket-void { border: 2px dashed #b91c1c; color: #b91c1c; padding: 0.35rem 0.4rem; margin: 0.4rem 0; font-size: 11px; text-align: center; }
+.ticket-void-title { font-size: 14px; font-weight: 800; letter-spacing: 1px; }
+/* Cuadro de anular */
+.void-summary { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 0.6rem; padding: 0.6rem 0.8rem; margin-bottom: 0.9rem; }
+.void-sum-row { display: flex; justify-content: space-between; gap: 0.5rem; font-size: 1.05rem; }
+.void-sum-total { color: var(--accent-gold); }
+.void-sum-items { margin-top: 0.3rem; font-size: 0.9rem; color: var(--text-secondary); overflow-wrap: anywhere; }
+.void-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.4rem 0 0.6rem; }
+.void-chip {
+  min-height: 2.6rem; padding: 0.3rem 0.8rem; border-radius: 999px; cursor: pointer; font-weight: 700; font-size: 0.95rem;
+  color: var(--text-primary); background: var(--bg-secondary); border: 1px solid var(--border-color);
+}
+.void-chip.active { background: rgba(239, 68, 68, 0.22); border-color: rgba(248, 113, 113, 0.8); color: var(--bad-text); }
+.void-hint { margin-top: 0.9rem; }
+#modalVoid { z-index: 1200 !important; }
+/* Lista "Ventas hechas": filas anuladas */
+tr.sale-voided td { opacity: 0.72; }
+tr.sale-voided .sale-total { text-decoration: line-through; }
+.void-why { max-width: 16rem; overflow-wrap: anywhere; }
+.sale-actions { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+/* "Ventas de mi caja" */
+.my-sales-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.my-sale {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 0.5rem 0.8rem; align-items: center;
+  background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 0.6rem; padding: 0.6rem 0.75rem;
+}
+.my-sale.is-voided { opacity: 0.7; }
+.my-sale.is-voided .my-sale-total { text-decoration: line-through; }
+.my-sale-top { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.my-sale-items { font-size: 0.9rem; color: var(--text-secondary); overflow-wrap: anywhere; }
+.my-sale-side { display: flex; flex-direction: column; align-items: flex-end; }
+.my-sale-total { color: var(--accent-gold); font-size: 1.05rem; }
+.my-sale-actions { display: flex; gap: 0.4rem; }
+@media (max-width: 560px) {
+  .my-sale { grid-template-columns: minmax(0, 1fr) auto; }
+  .my-sale-actions { grid-column: 1 / -1; justify-content: flex-end; }
+}
+.kpi-voided { color: var(--bad-text); font-weight: 700; margin-top: 0.2rem; }
+/* El total del botón de cobrar no se parte en dos líneas */
+#btnPosCheckoutTotal { white-space: nowrap; }
+
+/* ============================================================
+   §42  "Poner precios": productos cargados desde una lista, todavía en Q0 (pausados)
+   ============================================================ */
+.btn-prices { background: var(--accent-amber, #f59e0b); color: #1a1205; border-color: transparent; font-weight: 700; }
+.btn-prices .prices-count { margin-left: 0.25rem; font-weight: 800; }
+.prices-intro { margin: 0 0 0.75rem; line-height: 1.45; }
+.prices-list { max-height: min(52vh, 30rem); overflow-y: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--border-color, rgba(255,255,255,0.12)); border-radius: 0.75rem; padding: 0 0.5rem 0.5rem; }
+.prices-section { position: sticky; top: 0; z-index: 1; padding: 0.55rem 0.25rem 0.35rem; margin: 0 -0.5rem; padding-left: 0.75rem; font-weight: 800; background: var(--bg-surface, #182030); border-bottom: 1px solid var(--border-color, rgba(255,255,255,0.12)); }
+.price-row { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 0.4rem 0.25rem; border-bottom: 1px solid var(--border-color, rgba(255,255,255,0.08)); min-height: 3rem; }
+.price-row-name { flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; font-weight: 600; }
+.price-row-input { display: inline-flex; align-items: center; gap: 0.35rem; flex: 0 0 auto; font-weight: 800; }
+.price-input { width: 7rem; min-height: 2.75rem; text-align: right; font-size: 1.1rem; }
+@media (max-width: 480px) { .price-input { width: 5.5rem; } }
+
+/* ---------- 43. Vender más simple: la tarjeta es solo foto, nombre y precio ---------- */
+/* Sin descripción, sin avisos de existencias ni "toca para agregar". El precio va debajo de la foto, sin rayas ni etiquetas.
+   Cuando un producto ya está en el pedido, la tarjeta se marca con un borde de color y un número redondo (como la palomita de la foto). */
+.pos-products-grid .product-card { padding: 0 0 0.6rem !important; gap: 0.3rem !important; min-height: 0 !important; border-radius: 16px; }
+.pos-products-grid .product-card > .product-footer {
+  border-top: 0 !important; padding: 0.15rem 0 0; margin-top: 0; justify-content: flex-start;
+}
+.pos-products-grid .product-card .product-price { font-size: 1.25rem; letter-spacing: 0; }
+.pos-products-grid .product-card.in-cart {
+  border-color: var(--accent-gold); box-shadow: 0 0 0 2px var(--accent-gold), 0 6px 18px rgba(245, 158, 11, 0.22);
+}
+.card-qty {
+  display: none; position: absolute; top: 0.5rem; right: 0.5rem; z-index: 3;
+  min-width: 2.1rem; height: 2.1rem; padding: 0 0.45rem; box-sizing: border-box;
+  align-items: center; justify-content: center; border-radius: 999px;
+  background: var(--accent-gold); color: #111827; font-weight: 900; font-size: 1.1rem; line-height: 1;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+.pos-products-grid .product-card.in-cart .card-qty { display: inline-flex; }
+
+/* "Elegir escarchado y salsa": un botoncito redondo con el lápiz, arriba a la izquierda de la foto (el nombre sigue accesible para lector de pantalla) */
+.pos-products-grid .product-card > .btn-cust-trigger {
+  position: absolute !important; top: 0.5rem; left: 0.5rem; z-index: 3; margin: 0 !important;
+  width: 2.5rem !important; min-width: 0; height: 2.5rem; min-height: 0 !important; padding: 0 !important;
+  grid-column: auto !important; grid-row: auto !important;
+  display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; font-size: 1.1rem;
+  background: rgba(17, 24, 39, 0.88); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+.pos-products-grid .product-card > .btn-cust-trigger .cust-trigger-text {
+  position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+/* Celular y tableta acostada (imagen a la izquierda): la tarjeta queda más baja con solo nombre y precio */
+@media (max-width: 700px), (pointer: coarse) and (orientation: landscape) and (max-width: 1400px) {
+  .pos-products-grid .product-card { min-height: var(--hero) !important; }
+  .pos-products-grid .product-card > .product-footer { grid-row: 3; margin-bottom: 0.4rem; }
+  .pos-products-grid .product-card .card-qty { top: 0.35rem; right: 0.35rem; }
+}
+
+/* ---------- Pedido (derecha): líneas más limpias ---------- */
+.pos-cart-panel .btn-remove-item {
+  min-height: 2.2rem; min-width: 2.2rem; width: 2.2rem; padding: 0 !important; border-radius: 999px;
+  display: inline-flex; align-items: center; justify-content: center; font-size: 1rem; line-height: 1; flex: 0 0 auto;
+}
+.pos-cart-panel .cart-item-header { align-items: center; gap: 0.5rem; }
+.pos-cart-panel .cart-item-title { font-weight: 800; }
+.pos-cart-panel .pos-table-sub { display: none !important; }       /* "Pedido para:" sobra: el nombre ya lo dice */
+
+/* Recargo por pagar con tarjeta: aviso bajo el total a cobrar */
+.pay-surcharge {
+  margin-top: 0.35rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-secondary, #666);
+}
+
+/* ===== Detalle de un corte de caja ===== */
+.fila-corte { cursor: pointer; }
+.fila-corte:hover { background: var(--bg-hover, rgba(255,255,255,0.04)); }
+.fila-corte:focus-visible { outline: 2px solid var(--accent-amber); outline-offset: -2px; }
+.corte-ver { margin-top: 0.25rem; color: var(--accent-amber); font-weight: 600; white-space: nowrap; }
+.corte-modal { max-width: 640px; }
+.corte-cabecera { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 0.75rem; margin-bottom: 0.75rem; }
+.corte-seccion { margin-bottom: 1.1rem; }
+.corte-seccion h4 { margin: 0 0 0.45rem; font-size: 0.98rem; }
+.corte-fila { display: flex; justify-content: space-between; align-items: baseline; gap: 0.75rem; padding: 0.38rem 0; border-bottom: 1px solid var(--border-color, rgba(255,255,255,0.08)); }
+.corte-fila > span { min-width: 0; overflow-wrap: anywhere; }
+.corte-fila small { display: block; color: var(--text-secondary); font-size: 0.78rem; }
+.corte-fila > strong { white-space: nowrap; }
+.corte-total { font-size: 1.05rem; border-bottom: 2px solid var(--border-color, rgba(255,255,255,0.18)); }
+.corte-bien > strong { color: var(--ok-text); }
+.corte-mal > strong { color: var(--bad-text); }
+.corte-aviso { margin-top: 0.6rem; padding: 0.55rem 0.7rem; border-radius: 8px; background: rgba(239,68,68,0.12); font-size: 0.88rem; overflow-wrap: anywhere; }

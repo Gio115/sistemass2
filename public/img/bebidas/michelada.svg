@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4d1b27"/><stop offset="1" stop-color="#2b1019"/></linearGradient>
+    <linearGradient id="liq" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f36a45"/><stop offset="1" stop-color="#b3201f"/></linearGradient>
+    <clipPath id="glass"><path d="M27 26h42l-5.5 54a4 4 0 0 1-4 3.6H36.5a4 4 0 0 1-4-3.6z"/></clipPath>
+  </defs>
+  <rect width="96" height="96" rx="0" fill="url(#bg)"/>
+  <path d="M27 26h42l-5.5 54a4 4 0 0 1-4 3.6H36.5a4 4 0 0 1-4-3.6z" fill="#fff" fill-opacity=".10"/>
+  <g clip-path="url(#glass)">
+    <rect x="20" y="37" width="60" height="55" fill="url(#liq)"/>
+    <rect x="34" y="41" width="13" height="13" rx="3" fill="#fff" fill-opacity=".30" transform="rotate(-12 40 47)"/>
+    <rect x="51" y="47" width="12" height="12" rx="3" fill="#fff" fill-opacity=".22" transform="rotate(10 57 53)"/>
+    <rect x="40" y="62" width="11" height="11" rx="3" fill="#fff" fill-opacity=".16" transform="rotate(-6 45 67)"/>
+    <path d="M33.5 40l-2.6 38" stroke="#fff" stroke-opacity=".38" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <path d="M27 26h42l-5.5 54a4 4 0 0 1-4 3.6H36.5a4 4 0 0 1-4-3.6z" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="1.6" stroke-linejoin="round"/>
+  <rect x="24.5" y="21.5" width="47" height="9" rx="4.5" fill="#d9381e"/>
+  <g fill="#fde68a"><circle cx="30" cy="24.5" r="1.3"/><circle cx="38" cy="28" r="1.2"/><circle cx="46" cy="24" r="1.4"/><circle cx="54" cy="27.6" r="1.2"/><circle cx="62" cy="24.4" r="1.3"/><circle cx="67" cy="28" r="1"/></g>
+  <g fill="#7f1d1d"><circle cx="34" cy="25.2" r="1.1"/><circle cx="42" cy="27.8" r="1"/><circle cx="50" cy="25" r="1.1"/><circle cx="58" cy="25.4" r="1.2"/></g>
+  <path d="M60 22a12.5 12.5 0 0 0 25 0z" fill="#65a30d"/>
+  <path d="M63.2 22.2a9.3 9.3 0 0 0 18.6 0z" fill="#d9f99d"/>
+  <path d="M72.5 22.4v8.6M72.5 22.4l-5.6 6.2M72.5 22.4l5.6 6.2" stroke="#84cc16" stroke-width="1.4" stroke-linecap="round" fill="none"/>
+</svg>

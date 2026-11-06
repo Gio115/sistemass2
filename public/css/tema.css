@@ -1,0 +1,160 @@
+/* ===================================================
+   FONDO CLARO (por defecto) Y FONDO OSCURO
+   El fondo se elige con el botón de la barra lateral y se recuerda en cada aparato.
+   La versión oscura es la de siempre (variables de main.css); aquí solo se agregan los colores de la barra lateral.
+   =================================================== */
+
+/* ---------- colores de la barra lateral y del encabezado ---------- */
+:root, :root[data-theme="oscuro"] {
+  --border-strong: rgba(255, 255, 255, 0.2);
+  --rail-bg: #0e1420;
+  --rail-fg: #9fb0c6;
+  --rail-hover: rgba(255, 255, 255, 0.07);
+  --rail-active-bg: rgba(245, 158, 11, 0.2);
+  --rail-active-fg: #fde68a;
+  --rail-active-ring: #f59e0b;
+  --header-bg: #121722;
+  --accent-text: #fbbf24;       /* texto de acento (precios, totales) */
+  --ok-text: #34d399;
+  --bad-text: #fca5a5;
+  --card-photo-bg: #0c111b;
+  --info-text: #bfdbfe;
+  --warn-text: #fbbf24;
+  --text-strong: #ffffff;       /* texto más fuerte que el normal */
+  --text-mid: #e2e8f0;
+  --text-soft: #cbd5e1;
+  --chart-text: #d6deeb;
+  --chart-grid: rgba(255, 255, 255, 0.08);
+}
+
+/* ===================================================
+   FONDO CLARO
+   =================================================== */
+:root[data-theme="claro"] {
+  color-scheme: light;
+
+  --bg-primary: #f1f3f6;
+  --bg-secondary: #ffffff;
+  --bg-surface: #ffffff;
+  --bg-surface-hover: #e9edf2;
+  --bg-glass: rgba(255, 255, 255, 0.92);
+
+  --accent-gold: #f59e0b;
+  --accent-gold-hover: #d97706;
+  --accent-amber: #b45309;        /* el ámbar de los textos, oscurecido para que se lea sobre blanco */
+  --accent-red: #dc2626;
+  --accent-orange: #ea580c;
+  --accent-green: #059669;
+  --accent-blue: #2563eb;
+
+  --text-primary: #1a2230;
+  --text-secondary: #4a5568;
+  --text-muted: #6b7686;
+
+  --border-color: #dbe0e7;
+  --border-strong: #b9c2cf;
+  --border-focus: rgba(217, 119, 6, 0.6);
+
+  --shadow-sm: 0 1px 3px rgba(16, 24, 40, 0.08);
+  --shadow-md: 0 4px 12px rgba(16, 24, 40, 0.1);
+  --shadow-lg: 0 12px 28px -6px rgba(16, 24, 40, 0.22), 0 8px 10px -6px rgba(16, 24, 40, 0.12);
+  --glow-gold: 0 0 0 rgba(0, 0, 0, 0);
+
+  --rail-bg: #ffffff;
+  --rail-fg: #4a5568;
+  --rail-hover: #f1f3f6;
+  --rail-active-bg: #fff1cc;
+  --rail-active-fg: #7a2e00;
+  --rail-active-ring: #f59e0b;
+  --header-bg: #ffffff;
+  --accent-text: #b45309;
+  --ok-text: #047857;
+  --bad-text: #b91c1c;
+  --card-photo-bg: #e9edf2;
+  --info-text: #1e40af;
+  --warn-text: #92400e;
+  --text-strong: #0f172a;
+  --text-mid: #1f2937;
+  --text-soft: #4a5568;
+  --chart-text: #4a5568;
+  --chart-grid: rgba(16, 24, 40, 0.09);
+}
+
+/* ---------- pantalla de entrada ---------- */
+:root[data-theme="claro"] .auth-wrapper { background: radial-gradient(circle at 50% 18%, #ffffff 0%, #e8ecf1 75%); }
+
+/* ---------- botones ---------- */
+:root[data-theme="claro"] .btn-primary { color: #1a1205; box-shadow: 0 3px 8px rgba(217, 119, 6, 0.28); }
+:root[data-theme="claro"] .btn-secondary:hover { background: #dde3ea; }
+:root[data-theme="claro"] .btn-danger:hover { background: #b91c1c; }
+:root[data-theme="claro"] .btn-success:hover { background: #047857; }
+:root[data-theme="claro"] .form-control,
+:root[data-theme="claro"] select,
+:root[data-theme="claro"] input,
+:root[data-theme="claro"] textarea { color-scheme: light; }
+:root[data-theme="claro"] .form-control { background: #fff; border-color: var(--border-strong); }
+:root[data-theme="claro"] .form-control::placeholder { color: #7b8696; }
+
+/* ---------- pantallas y tarjetas ---------- */
+:root[data-theme="claro"] ::-webkit-scrollbar-track { background: #eef1f5; }
+:root[data-theme="claro"] ::-webkit-scrollbar-thumb { background: #c3cbd6; }
+:root[data-theme="claro"] .kpi-card,
+:root[data-theme="claro"] .chart-card,
+:root[data-theme="claro"] .table-card,
+:root[data-theme="claro"] .pos-catalog-panel,
+:root[data-theme="claro"] .pos-cart-panel { box-shadow: var(--shadow-sm); }
+
+/* ---------- texto de acento ---------- */
+:root[data-theme="claro"] .void-sum-total,
+:root[data-theme="claro"] .my-sale-total,
+:root[data-theme="claro"] .mesa-resumen-total .amount,
+:root[data-theme="claro"] .settings-section h3,
+:root[data-theme="claro"] .shift-summary-total,
+:root[data-theme="claro"] .user-avatar { color: var(--accent-text); }
+
+/* ---------- fondo de ventanas ---------- */
+:root[data-theme="claro"] .modal-overlay { background: rgba(23, 31, 46, 0.55); }
+
+/* ---------- avisos ---------- */
+:root[data-theme="claro"] .toast { color: var(--text-primary); box-shadow: 0 10px 30px rgba(16, 24, 40, 0.25); }
+:root[data-theme="claro"] .toast.success { background: #e5f6ee; border-color: #059669; }
+:root[data-theme="claro"] .toast.error { background: #fdeaea; border-color: #dc2626; }
+:root[data-theme="claro"] .toast.warning,
+:root[data-theme="claro"] .toast.info { background: #fff3d1; border-color: #d97706; }
+:root[data-theme="claro"] .toast-close { background: rgba(16, 24, 40, 0.08); }
+:root[data-theme="claro"] .toast-close:hover { background: rgba(16, 24, 40, 0.16); }
+
+/* ---------- cobro: cuánto cambio se da ---------- */
+:root[data-theme="claro"] .change-banner { background: #e5f6ee !important; }
+:root[data-theme="claro"] .change-banner > span:first-child { color: var(--text-strong); }
+:root[data-theme="claro"] .pay-panel .pay-footer-change { background: #e5f6ee; }
+:root[data-theme="claro"] .pay-panel .pay-footer-change.is-short { background: #fdeaea; }
+
+/* ---------- botones y filtros que se pintan de ámbar: en fondo claro llevan el ámbar claro (no el oscuro de los textos) ---------- */
+:root[data-theme="claro"] .table-filter-pill.active,
+:root[data-theme="claro"] .table-btn-bill:hover,
+:root[data-theme="claro"] .btn-prices { background: #fbbf24; border-color: #f59e0b; color: #1a1205; }
+
+/* ---------- pedido, cobro y cuadros: fondos que estaban fijos en oscuro ---------- */
+:root[data-theme="claro"] .pos-cart-panel { background: var(--bg-surface) !important; border-color: var(--border-color) !important; }
+:root[data-theme="claro"] .cart-header { background: #f6f7f9; }
+:root[data-theme="claro"] .cart-footer,
+:root[data-theme="claro"] .modal-footer,
+:root[data-theme="claro"] .pay-panel-footer { background: #f6f7f9; border-color: var(--border-color); }
+:root[data-theme="claro"] .tablet-floating-cart-bar { background: #ffffff !important; box-shadow: 0 -4px 16px rgba(16, 24, 40, 0.15) !important; }
+:root[data-theme="claro"] .tablet-floating-btn-pay:disabled { background: #cbd2dc !important; color: #5b6472 !important; }
+:root[data-theme="claro"] .pos-products-grid .product-card .product-card-header { background: var(--card-photo-bg); }
+:root[data-theme="claro"] .drawer-drag-handle { background: rgba(16, 24, 40, 0.25) !important; }
+:root[data-theme="claro"] .cart-drawer-backdrop { background: rgba(23, 31, 46, 0.55) !important; }
+
+/* ---------- etiquetas de estado de la mesa: texto más oscuro para que se lea sobre blanco ---------- */
+:root[data-theme="claro"] .pill-ocupada { background: #ffedd5; color: #9a3412; border-color: #fb923c; }
+:root[data-theme="claro"] .pill-libre { background: #d1fae5; color: #065f46; border-color: #34d399; }
+:root[data-theme="claro"] .pill-cuenta_pedida { background: #fef3c7; color: #78350f; border-color: #f59e0b; }
+
+/* el cajón del pedido/cobro (pantallas angostas) también se ve claro: el encabezado oscuro dejaba el título invisible */
+@media (max-width: 900px) {
+  :root[data-theme="claro"] .pos-cart-panel .cart-header { background: #f6f7f9 !important; }
+  :root[data-theme="claro"] .pos-cart-panel .btn-close-cart-drawer { background: rgba(0, 0, 0, 0.08) !important; color: var(--text-primary) !important; }
+  :root[data-theme="claro"] .pos-cart-panel .drawer-drag-handle { background: rgba(0, 0, 0, 0.25) !important; }
+}

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0f4a4d"/><stop offset="1" stop-color="#0a2c33"/></linearGradient>
+    <linearGradient id="liq" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bef264"/><stop offset="1" stop-color="#4ade80"/></linearGradient>
+    <clipPath id="cup"><path d="M26 28h44l-4.6 52a4 4 0 0 1-4 3.7H34.6a4 4 0 0 1-4-3.7z"/></clipPath>
+  </defs>
+  <rect width="96" height="96" rx="0" fill="url(#bg)"/>
+  <!-- popote -->
+  <path d="M56 56L66 12h8" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M56 56L66 12h8" fill="none" stroke="#ef4444" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="5 5"/>
+  <path d="M26 28h44l-4.6 52a4 4 0 0 1-4 3.7H34.6a4 4 0 0 1-4-3.7z" fill="#fff" fill-opacity=".12"/>
+  <g clip-path="url(#cup)">
+    <rect x="20" y="38" width="60" height="50" fill="url(#liq)"/>
+    <rect x="33" y="42" width="13" height="13" rx="3" fill="#fff" fill-opacity=".34" transform="rotate(-10 39 48)"/>
+    <rect x="49" y="50" width="12" height="12" rx="3" fill="#fff" fill-opacity=".26" transform="rotate(12 55 56)"/>
+    <g fill="#fff" fill-opacity=".7"><circle cx="38" cy="70" r="2"/><circle cx="52" cy="72" r="1.6"/><circle cx="45" cy="64" r="1.4"/><circle cx="58" cy="68" r="1.2"/><circle cx="34" cy="62" r="1.2"/></g>
+    <path d="M32 42l-2.6 34" stroke="#fff" stroke-opacity=".45" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <path d="M26 28h44l-4.6 52a4 4 0 0 1-4 3.7H34.6a4 4 0 0 1-4-3.7z" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="1.8" stroke-linejoin="round"/>
+  <!-- rodaja de limón en el borde -->
+  <circle cx="26" cy="28" r="10" fill="#facc15"/>
+  <circle cx="26" cy="28" r="7.6" fill="#fef9c3"/>
+  <path d="M26 28V20.6M26 28l6.2-4M26 28l5.6 4.6M26 28l-5.6 4.6M26 28l-6.2-4" stroke="#fde047" stroke-width="1.3" stroke-linecap="round"/>
+</svg>
